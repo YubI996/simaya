@@ -462,13 +462,15 @@ if (isset($_POST['prpsl-add'])) {
 						$flData  = $pdo->prepare($itmQRY);
 						$flData->execute();
 						$result = $flData->fetchAll(\PDO::FETCH_ASSOC);
-
+						// print_r($_POST);
 						foreach ($result as $data) {
 							$id = $data['id_item'];
 							$item = $data['item'];
-							$hasil[$id] = ($_POST[$id . $item]);
+							// $hasil3[$id] = ([$id . $item]);
+							$hasil3[$id] = ($_POST["kgD4tforLo0P"][$int][$id . $item]);
 						}
-						foreach ($hasil as $id => $val) {
+						// var_dump($hasil3);
+						foreach ($hasil3 as $id => $val) {
 							$itmQry = "INSERT INTO item_prop (`id_item`, `id_pnp`, `value`) VALUES ( ?, ?, ?)";
 							$addItmQry = $pdo->prepare($itmQry);
 							$addItmQry->execute([$id, $ppId, $val]);

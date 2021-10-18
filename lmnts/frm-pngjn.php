@@ -223,7 +223,12 @@
                                                                         </div>
                                                                         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                                                                             <div class="input-mark-inner mg-b-22">
-                                                                                <input type="text" class="form-control <?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+                                                                                <input type="<?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+                                                                                                    echo 'number"';
+                                                                                                } else {
+                                                                                                    echo 'text';
+                                                                                                }
+                                                                                                ?>" class="form-control <?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
                                                                                                                             echo 'mask-currency"';
                                                                                                                         }
                                                                                                                         ?>" placeholder="<?php if ($fileAllDt[$i]['item'] == 'Nama Kegiatan') {
@@ -232,9 +237,9 @@
                                                                                                                                                 echo 'Rp 0.000.000';
                                                                                                                                             }
                                                                                                                                             ?>" name="<?php echo $fileAllDt[$i]['id_item'] . $fileAllDt[$i]['item']; ?>" <?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
-                                                                                                                                                                                                                                                                                                                                                        echo 'onkeyup="maskCurrency()"';
-                                                                                                                                                                                                                                                                                                                                                    }
-                                                                                                                                                                                                                                                                                                                                                    ?> />
+                                                                                                                                                                                                                                                            echo 'onkeyup="maskCurrency()"';
+                                                                                                                                                                                                                                                        }
+                                                                                                                                                                                                                                                        ?> />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -319,15 +324,20 @@
                                                         </div>
                                                         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                                                             <div class="input-mark-inner mg-b-22">
-                                                                <input type="text" class="form-control mask-currency" placeholder="<?php if ($datas["item"] == 'Nama Kegiatan') {
+                                                                <input type="<?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+                                                                                    echo 'number"';
+                                                                                } else {
+                                                                                    echo 'text';
+                                                                                }
+                                                                                ?>" class="form-control mask-currency" placeholder="<?php if ($datas["item"] == 'Nama Kegiatan') {
                                                                                                                                         echo 'Nama Kegiatan';
                                                                                                                                     } else {
                                                                                                                                         echo 'Rp 0.000.000';
                                                                                                                                     }
                                                                                                                                     ?>" name="<?php echo $datas["id_item"] . $datas["item"]; ?>" <?php if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
-                                                                                                                                                                                                        echo 'onkeyup="maskCurrency()"';
-                                                                                                                                                                                                    }
-                                                                                                                                                                                                    ?> />
+                                                                                                                                                                                                                        echo 'onkeyup="maskCurrency()"';
+                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                    ?> />
                                                             </div>
                                                         </div>
                                                     </div>

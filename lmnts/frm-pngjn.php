@@ -223,15 +223,18 @@
                                                                         </div>
                                                                         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                                                                             <div class="input-mark-inner mg-b-22">
-                                                                                <input type="text" class="form-control mask-currency" placeholder="<?php if ($fileAllDt[$i]['item'] == 'Nama Kegiatan') {
-                                                                                                                                                        echo 'Nama Kegiatan';
-                                                                                                                                                    } else {
-                                                                                                                                                        echo 'Rp 0.000.000';
-                                                                                                                                                    }
-                                                                                                                                                    ?>" name="<?php echo $fileAllDt[$i]['item']; ?>" <?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
-                                                                                                                                                                                                            echo 'onkeyup="maskCurrency()"';
-                                                                                                                                                                                                        }
-                                                                                                                                                                                                        ?> />
+                                                                                <input type="text" class="form-control <?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+                                                                                                                            echo 'mask-currency"';
+                                                                                                                        }
+                                                                                                                        ?>" placeholder="<?php if ($fileAllDt[$i]['item'] == 'Nama Kegiatan') {
+                                                                                                                                                echo 'Nama Kegiatan';
+                                                                                                                                            } else {
+                                                                                                                                                echo 'Rp 0.000.000';
+                                                                                                                                            }
+                                                                                                                                            ?>" name="<?php echo $fileAllDt[$i]['id_item'] . $fileAllDt[$i]['item']; ?>" <?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+                                                                                                                                                                                                                                                                                                                                                        echo 'onkeyup="maskCurrency()"';
+                                                                                                                                                                                                                                                                                                                                                    }
+                                                                                                                                                                                                                                                                                                                                                    ?> />
                                                                             </div>
                                                                         </div>
                                                                     </div>
@@ -301,7 +304,7 @@
                                             }
                                     ?>
                                             <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-left"> <?php echo $judul; ?></label>
+                                                <label class="login2 pull-left"> <?php echo $key . ". " . $judul; ?></label>
                                             </div>
                                             <?php
                                             // var_dump("key : " . $key . ":");
@@ -321,10 +324,10 @@
                                                                                                                                     } else {
                                                                                                                                         echo 'Rp 0.000.000';
                                                                                                                                     }
-                                                                                                                                    ?>" name="<?php echo $datas["item"]; ?>" <?php if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
-                                                                                                                                                                                    echo 'onkeyup="maskCurrency()"';
-                                                                                                                                                                                }
-                                                                                                                                                                                ?> />
+                                                                                                                                    ?>" name="<?php echo $datas["id_item"] . $datas["item"]; ?>" <?php if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
+                                                                                                                                                                                                        echo 'onkeyup="maskCurrency()"';
+                                                                                                                                                                                                    }
+                                                                                                                                                                                                    ?> />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -380,6 +383,7 @@
                         <div class="login-horizental cancel-wp pull-left">
                             <button class="btn btn-white" type="submit" onclick="cancelPrpsl($(this))">Cancel</button>
                             <button class="btn btn-sm btn-primary login-submit-cs" type="submit" id="fm-prpsl" name="prpsl-add" value="save" onclick="addPrpsl($(this))">Save Change</button>
+                            <!-- <button class="btn btn-sm btn-primary login-submit-cs" type="submit" id="fm-prpsl" name="prpsl-add" value="save" onclick="console.log($(this))">Save Change</button> -->
                         </div>
                     </div>
                 </div>

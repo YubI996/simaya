@@ -55,6 +55,8 @@ $(document).ready(function() {
             var f1 = new FormData(formAttr);
 
             f1.append('prpsl-add', 1);
+            // console.log($(f1));
+            // throw new Error("Something went badly wrong!");
 
             $.ajax({
                 type: 'POST',

@@ -1,36 +1,38 @@
-<?php 
+<?php
 
 include_once("./serv-conf.php");
 $root = BASE_URL;
 $state = STATE;
+// var_dump($_POST);
+function fungsi_name($s)
+{ //sanitasi dan penyeragaman case
+	$c = array(' ');
+	$d = array('-', '/', '\\', ',', '.', '#', ':', ';', '\'', '"', '[', ']', '{', '}', ')', '(', '|', '`', '~', '!', '@', '%', '$', '^', '&', '*', '=', '?', '+');
 
-function fungsi_name($s) {//sanitasi dan penyeragaman case
-    $c = array (' ');
-    $d = array ('-','/','\\',',','.','#',':',';','\'','"','[',']','{','}',')','(','|','`','~','!','@','%','$','^','&','*','=','?','+');
+	$s = str_replace($d, '', $s); // Hilangkan karakter yang telah disebutkan di array $d
 
-    $s = str_replace($d, '', $s); // Hilangkan karakter yang telah disebutkan di array $d
-    
-    $s = strtolower(str_replace($c, '-', $s)); // Ganti spasi dengan tanda - dan ubah hurufnya menjadi kecil semua
-    return $s;
+	$s = strtolower(str_replace($c, '-', $s)); // Ganti spasi dengan tanda - dan ubah hurufnya menjadi kecil semua
+	return $s;
 }
 
-function filename($s) {
-    $c = array (' ');
-    
-    $s = strtolower(str_replace($c, '-', $s)); // Ganti spasi dengan tanda - dan ubah hurufnya menjadi kecil semua
-    return $s;
+function filename($s)
+{
+	$c = array(' ');
+
+	$s = strtolower(str_replace($c, '-', $s)); // Ganti spasi dengan tanda - dan ubah hurufnya menjadi kecil semua
+	return $s;
 }
 
-if(isset($_POST['prpsl-add'])) {
+if (isset($_POST['prpsl-add'])) {
 	$int = 0;
 
 	$usr 			= $_SESSION["access-login"];
 	$usrID			= $_SESSION["uID"];
-	$pp_name 		= $_POST['pp_nm'];//pp = parpol
+	$pp_name 		= $_POST['pp_nm']; //pp = parpol
 	$pp_address 	= $_POST['pp_adr'];
 	$pp_lead		= $_POST['pp_ld'];
 	$pp_secretary	= $_POST['pp_scr'];
-	$pp_exchequer	= $_POST['pp_exc'];//bendahara
+	$pp_exchequer	= $_POST['pp_exc']; //bendahara
 	$pp_skdate		= $_POST['pp_skdt'];
 	$pp_npwp 		= $_POST['pp_npwp'];
 	$dtprv 			= date('Y-m-d', strtotime($pp_skdate));
@@ -60,10 +62,10 @@ if(isset($_POST['prpsl-add'])) {
 		if ($postId == true) {
 			try {
 
-				if ( $_POST['flLabel-1'] != null ) {
+				if ($_POST['flLabel-1'] != null) {
 					$cnfg 		= $_POST['flCnfg-1'];
 					$f1nmTmp 	= fungsi_name($_FILES["flName-1"]["name"]);
-					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf'; 
+					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf';
 
 					$addQry 	= "INSERT INTO pile (prpdt_id, pcnfg_id, pile_, sttus, created_by, modified_by) VALUES (:prpdt_id, :cnfg, :name, :sttus, :user, :user)";
 					$adFile 	= $pdo->prepare($addQry);
@@ -87,10 +89,10 @@ if(isset($_POST['prpsl-add'])) {
 					}
 				}
 
-				if ( $_POST['flLabel-2'] != null ) {
+				if ($_POST['flLabel-2'] != null) {
 					$cnfg 		= $_POST['flCnfg-2'];
 					$f1nmTmp 	= fungsi_name($_FILES["flName-2"]["name"]);
-					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf'; 
+					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf';
 
 					$addQry 	= "INSERT INTO pile (prpdt_id, pcnfg_id, pile_, sttus, created_by, modified_by) VALUES (:prpdt_id, :cnfg, :name, :sttus, :user, :user)";
 					$adFile 	= $pdo->prepare($addQry);
@@ -114,10 +116,10 @@ if(isset($_POST['prpsl-add'])) {
 					}
 				}
 
-				if ( $_POST['flLabel-3'] != null ) {
+				if ($_POST['flLabel-3'] != null) {
 					$cnfg 		= $_POST['flCnfg-3'];
 					$f1nmTmp 	= fungsi_name($_FILES["flName-3"]["name"]);
-					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf'; 
+					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf';
 
 					$addQry 	= "INSERT INTO pile (prpdt_id, pcnfg_id, pile_, sttus, created_by, modified_by) VALUES (:prpdt_id, :cnfg, :name, :sttus, :user, :user)";
 					$adFile 	= $pdo->prepare($addQry);
@@ -141,10 +143,10 @@ if(isset($_POST['prpsl-add'])) {
 					}
 				}
 
-				if ( $_POST['flLabel-4'] != null ) {
+				if ($_POST['flLabel-4'] != null) {
 					$cnfg 		= $_POST['flCnfg-4'];
 					$f1nmTmp 	= fungsi_name($_FILES["flName-4"]["name"]);
-					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf'; 
+					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf';
 
 					$addQry 	= "INSERT INTO pile (prpdt_id, pcnfg_id, pile_, sttus, created_by, modified_by) VALUES (:prpdt_id, :cnfg, :name, :sttus, :user, :user)";
 					$adFile 	= $pdo->prepare($addQry);
@@ -168,10 +170,10 @@ if(isset($_POST['prpsl-add'])) {
 					}
 				}
 
-				if ( $_POST['flLabel-5'] != null ) {
+				if ($_POST['flLabel-5'] != null) {
 					$cnfg 		= $_POST['flCnfg-5'];
 					$f1nmTmp 	= fungsi_name($_FILES["flName-5"]["name"]);
-					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf'; 
+					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf';
 
 					$addQry 	= "INSERT INTO pile (prpdt_id, pcnfg_id, pile_, sttus, created_by, modified_by) VALUES (:prpdt_id, :cnfg, :name, :sttus, :user, :user)";
 					$adFile 	= $pdo->prepare($addQry);
@@ -195,10 +197,10 @@ if(isset($_POST['prpsl-add'])) {
 					}
 				}
 
-				if ( $_POST['flLabel-6'] != null ) {
+				if ($_POST['flLabel-6'] != null) {
 					$cnfg 		= $_POST['flCnfg-6'];
 					$f1nmTmp 	= fungsi_name($_FILES["flName-6"]["name"]);
-					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf'; 
+					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf';
 
 					$addQry 	= "INSERT INTO pile (prpdt_id, pcnfg_id, pile_, sttus, created_by, modified_by) VALUES (:prpdt_id, :cnfg, :name, :sttus, :user, :user)";
 					$adFile 	= $pdo->prepare($addQry);
@@ -222,10 +224,10 @@ if(isset($_POST['prpsl-add'])) {
 					}
 				}
 
-				if ( $_POST['flLabel-7'] != null ) {
+				if ($_POST['flLabel-7'] != null) {
 					$cnfg 		= $_POST['flCnfg-7'];
 					$f1nmTmp 	= fungsi_name($_FILES["flName-7"]["name"]);
-					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf'; 
+					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf';
 
 					$addQry 	= "INSERT INTO pile (prpdt_id, pcnfg_id, pile_, sttus, created_by, modified_by) VALUES (:prpdt_id, :cnfg, :name, :sttus, :user, :user)";
 					$adFile 	= $pdo->prepare($addQry);
@@ -249,10 +251,10 @@ if(isset($_POST['prpsl-add'])) {
 					}
 				}
 
-				if ( $_POST['flLabel-8'] != null ) {
+				if ($_POST['flLabel-8'] != null) {
 					$cnfg 		= $_POST['flCnfg-8'];
 					$f1nmTmp 	= fungsi_name($_FILES["flName-8"]["name"]);
-					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf'; 
+					$f1name 	= $usr . '-' . $cnfg . '-' . $postId . '-' . md5($f1nmTmp) . '.pdf';
 
 					$addQry 	= "INSERT INTO pile (prpdt_id, pcnfg_id, pile_, sttus, created_by, modified_by) VALUES (:prpdt_id, :cnfg, :name, :sttus, :user, :user)";
 					$adFile 	= $pdo->prepare($addQry);
@@ -276,6 +278,23 @@ if(isset($_POST['prpsl-add'])) {
 					}
 				}
 
+				//buat proposal
+				// try {
+				// 	$addOsQry = "INSERT INTO item_prop (prpdt_id, sttus, created_by) VALUES (:prpdt_id, :baru, :user)";
+				// 	$adPrpslOs = $pdo->prepare($addOsQry);
+				// 	$adPrpslOs->bindValue(":prpdt_id", $prpdt_id, PDO::PARAM_STR);
+				// 	$adPrpslOs->bindValue(":baru", "baru", PDO::PARAM_STR);
+				// 	$adPrpslOs->bindValue(":user", $usr, PDO::PARAM_STR);
+				// 	$adPrpslOs->execute();
+				// 	// $result = $adPrpslOs->fetch(PDO::FETCH_ASSOC);
+				// 	$result = $pdo->lastInsertId();
+				// var_dump($_POST);
+				// } catch (PDOException $e) {
+				// 	echo $e;
+				// }
+
+
+				//input operasional kesekretariatan
 				if ($_POST['os_atk'] == "") {
 					$pp_osAtk	= "0";
 				} else {
@@ -342,29 +361,38 @@ if(isset($_POST['prpsl-add'])) {
 					$pp_osLain	= $_POST['os_ln'];
 				}
 
-				$addOsQry = "INSERT INTO prpdt_opskdt (prpdt_id, opskdt_atk, opskdt_fc, opskdt_ln, opskdt_hnr, opskdt_sewa, opskdt_sda, opskdt_mdl, opskdt_prpl, opskdt_pmkpn, opskdt_pmltn, opskdt_trns, sttus, created_by, modified_by) VALUES (:prpdt_id, :opskdt_atk, :opskdt_fc, :opskdt_ln, :opskdt_hnr, :opskdt_sewa, :opskdt_sda, :opskdt_mdl, :opskdt_prpl, :opskdt_pmkpn, :opskdt_pmltn, :opskdt_trns, :sttus, :user, :user)";
-				$adPrpslOs = $pdo->prepare($addOsQry);
-				$adPrpslOs->bindValue(":prpdt_id", $postId, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_atk", $pp_osAtk, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_fc", $pp_osFc, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_ln", $pp_osLain, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_hnr", $pp_osHonor, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_sewa", $pp_osSewa, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_sda", $pp_osSda, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_mdl", $pp_osMdl, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_prpl", $pp_osPerpel, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_pmkpn", $pp_osPepan, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_pmltn", $pp_osPetan, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":opskdt_trns", $pp_osTrans, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":sttus", $pp_status, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":user", $usr, PDO::PARAM_STR);
-				$adPrpslOs->bindValue(":user", $usr, PDO::PARAM_STR);
-				$adPrpslOs->execute();
+				try {
+					$addOsQry = "INSERT INTO `prpdt_opskdt` (`prpdt_id`, `sttus`, `created_by`) VALUES (?,?,?)";
+					$adPrpslOs = $pdo->prepare($addOsQry);
+					$hasil5 = $adPrpslOs->execute([$postId, $pp_status, $usr]);
+					$opId = $pdo->lastInsertId();
+				} catch (PDOException $e) {
+					print_r("Perhatian : " . $e);
+				}
+				$itmQRY   = "SELECT id_item, item FROM item_kegiatan WHERE NOT kategori_item = 'a'";
+				$flData  = $pdo->prepare($itmQRY);
+				$flData->execute();
+				$result = $flData->fetchAll(\PDO::FETCH_ASSOC);
+
+				foreach ($result as $data) {
+					$id = $data['id_item'];
+					$item = str_replace(" ", "_", $data['item']);
+					$hasil[$id] = ($_POST[$id . $item]);
+				}
+				// print_r($hasil);
+
+				foreach ($hasil as $id => $val) {
+					// $addOsQry = "INSERT INTO item_prop ('id_item', 'id_op', 'value') VALUES ( :id_item, :id_op, :val)";
+					$addOsQry = "INSERT INTO `item_prop`(`id_item`, `id_op`, `value`) VALUES ( ?, ?, ?)";
+					$adPrpslOs = $pdo->prepare($addOsQry);
+					$adPrpslOs->execute([$id, $opId, $val]);
+				}
+
 
 				$kegCount = count($_POST['kgD4tforLo0P']);
 
 				try {
-					while ( $int < $kegCount ) {
+					while ($int < $kegCount) {
 						if ($_POST['kgD4tforLo0P'][$int]['pnp_nkg'] == "") {
 							$pp_ppKeg	= "kegiatan partai";
 						} else {
@@ -384,9 +412,9 @@ if(isset($_POST['prpsl-add'])) {
 						}
 
 						if ($_POST['kgD4tforLo0P'][$int]['pnp_mm'] == "") {
-							$pp_ppMknMnm= "0";
+							$pp_ppMknMnm = "0";
 						} else {
-							$pp_ppMknMnm= $_POST['kgD4tforLo0P'][$int]['pnp_mm'];
+							$pp_ppMknMnm = $_POST['kgD4tforLo0P'][$int]['pnp_mm'];
 						}
 
 						if ($_POST['kgD4tforLo0P'][$int]['pnp_sppd'] == "") {
@@ -425,64 +453,59 @@ if(isset($_POST['prpsl-add'])) {
 							$pp_ppDll	= $_POST['kgD4tforLo0P'][$int]['pnp_dll'];
 						}
 
-						$addPpQry = "INSERT INTO prpdt_pnpldt (prpdt_id, pnpldt_nm, pnpldt_atk, pnpldt_ctk, pnpldt_mkmn, pnpldt_sppd, pnpldt_hnr, pnpldt_trns, pnpldt_swa, pnpldt_sku, pnpldt_ln, sttus, created_by, modified_by) VALUES (:prpdt_id, :pnpldt_nm, :pnpldt_atk, :pnpldt_ctk, :pnpldt_mkmn, :pnpldt_sppd, :pnpldt_hnr, :pnpldt_trns, :pnpldt_swa, :pnpldt_sku, :pnpldt_ln, :sttus, :user, :user)";
+						$addPpQry = "INSERT INTO prpdt_pnpldt (prpdt_id, sttus, created_by) VALUES (?,?,?)";
 						$adPrpslPp = $pdo->prepare($addPpQry);
-						$adPrpslPp->bindValue(":prpdt_id", $postId, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_nm", $pp_ppKeg, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_atk", $pp_ppAtk, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_ctk", $pp_ppCtk, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_mkmn", $pp_ppMknMnm, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_sppd", $pp_ppSppd, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_hnr", $pp_ppHonor, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_trns", $pp_ppTrans, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_swa", $pp_ppSewa, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_sku", $pp_ppSaku, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":pnpldt_ln", $pp_ppDll, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":sttus", $pp_status, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":user", $usr, PDO::PARAM_STR);
-						$adPrpslPp->bindValue(":user", $usr, PDO::PARAM_STR);
-						$adPrpslPp->execute();
+						$adPrpslPp->execute([$postId, $pp_status, $usr]);
+						$ppId = $pdo->lastInsertId();
 
+						$itmQRY   = "SELECT id_item, item FROM item_kegiatan WHERE kategori_item = 'a'";
+						$flData  = $pdo->prepare($itmQRY);
+						$flData->execute();
+						$result = $flData->fetchAll(\PDO::FETCH_ASSOC);
+
+						foreach ($result as $data) {
+							$id = $data['id_item'];
+							$item = $data['item'];
+							$hasil[$id] = ($_POST[$id . $item]);
+						}
+						foreach ($hasil as $id => $val) {
+							$itmQry = "INSERT INTO item_prop (`id_item`, `id_pnp`, `value`) VALUES ( ?, ?, ?)";
+							$addItmQry = $pdo->prepare($itmQry);
+							$addItmQry->execute([$id, $ppId, $val]);
+						}
 						$int++;
 					}
 
 					$pdo->commit();
 					echo "green";
-
 				} catch (PDOException $e) {
 					$pdo->rollback();
-					if ( $state == 'devel' ) {
+					if ($state == 'devel') {
 						echo $e;
-					}elseif ($state == 'production') {
+					} elseif ($state == 'production') {
 						echo $e->getCode();
 					}
 				}
-
-
 			} catch (PDOException $e) {
 				$pdo->rollback();
-				if ( $state == 'devel' ) {
+				if ($state == 'devel') {
 					echo $e;
-				}elseif ($state == 'production') {
+				} elseif ($state == 'production') {
 					echo $e->getCode();
 				}
 			}
-
 		} else {
 			echo "Inserted Post not found";
 			$pdo->rollback();
 		}
-
 	} catch (PDOException $e) {
 		$pdo->rollback();
-		if ( $state == 'devel' ) {
+		if ($state == 'devel') {
 			echo $e;
-		}elseif ($state == 'production') {
+		} elseif ($state == 'production') {
 			echo $e->getCode();
 		}
-		
 	}
-
 }
 
 //DELETE PROPOSAL
@@ -521,31 +544,29 @@ elseif (isset($_POST['prpsl-del'])) {
 				echo "green";
 			} catch (PDOException $e) {
 				$pdo->rollback();
-				if ( $state == 'devel' ) {
+				if ($state == 'devel') {
 					echo $e;
-				}elseif ($state == 'production') {
+				} elseif ($state == 'production') {
 					echo $e->getCode();
 				}
 			}
 		} catch (PDOException $e) {
 			$pdo->rollback();
-			if ( $state == 'devel' ) {
+			if ($state == 'devel') {
 				echo $e;
-			}elseif ($state == 'production') {
+			} elseif ($state == 'production') {
 				echo $e->getCode();
 			}
 		}
 	} catch (PDOException $e) {
 		$pdo->rollback();
-		if ( $state == 'devel' ) {
+		if ($state == 'devel') {
 			echo $e;
-		}elseif ($state == 'production') {
+		} elseif ($state == 'production') {
 			echo $e->getCode();
 		}
 	}
-}
-
-elseif (isset($_POST['prpsl-kp-put'])) {
+} elseif (isset($_POST['prpsl-kp-put'])) {
 	$user 			= $_SESSION["access-login"];
 	$pp_id 			= $_POST['data']['pp_num'];
 	$pp_name 		= $_POST['data']['pp_nm'];
@@ -577,15 +598,13 @@ elseif (isset($_POST['prpsl-kp-put'])) {
 		echo "green";
 	} catch (PDOException $e) {
 		$pdo->rollback();
-		if ( $state == 'devel' ) {
+		if ($state == 'devel') {
 			echo $e;
-		}elseif ($state == 'production') {
+		} elseif ($state == 'production') {
 			echo $e->getCode();
 		}
 	}
-}
-
-elseif (isset($_POST['prpsl-os-put'])) {
+} elseif (isset($_POST['prpsl-os-put'])) {
 	$user 		= $_SESSION["access-login"];
 	$osId 		= $_POST['data']['os_num'];
 	$osAtk 		= $_POST['data']['os_atk'];
@@ -624,15 +643,13 @@ elseif (isset($_POST['prpsl-os-put'])) {
 		echo "green";
 	} catch (PDOException $e) {
 		$pdo->rollback();
-		if ( $state == 'devel' ) {
+		if ($state == 'devel') {
 			echo $e;
-		}elseif ($state == 'production') {
+		} elseif ($state == 'production') {
 			echo $e->getCode();
 		}
 	}
-}
-
-elseif (isset($_POST['prpsl-pp-put'])) {
+} elseif (isset($_POST['prpsl-pp-put'])) {
 	$user 		= $_SESSION["access-login"];
 	$cont 		= $_POST['cont'];
 	$pnpId 		= $_POST['data']['pnp_num'];
@@ -647,43 +664,43 @@ elseif (isset($_POST['prpsl-pp-put'])) {
 	$pnpSewa 	= $_POST['data']['pnp_swa'];
 	$pnpSaku 	= $_POST['data']['pnp_sku'];
 
-	if ( $pnpName == "") {
+	if ($pnpName == "") {
 		$pnpName = "kegiatan partai";
 	}
 
-	if ( $pnpAtk == "") {
+	if ($pnpAtk == "") {
 		$pnpAtk = "0";
 	}
 
-	if ( $pnpCetak == "") {
+	if ($pnpCetak == "") {
 		$pnpCetak = "0";
 	}
 
-	if ( $pnpMkmn == "") {
+	if ($pnpMkmn == "") {
 		$pnpMkmn = "0";
 	}
 
-	if ( $pnpSppd == "") {
+	if ($pnpSppd == "") {
 		$pnpSppd = "0";
 	}
 
-	if ( $pnpLain == "") {
+	if ($pnpLain == "") {
 		$pnpLain = "0";
 	}
 
-	if ( $pnpHonor == "") {
+	if ($pnpHonor == "") {
 		$pnpHonor = "0";
 	}
 
-	if ( $pnpTrans == "") {
+	if ($pnpTrans == "") {
 		$pnpTrans = "0";
 	}
 
-	if ( $pnpSewa == "") {
+	if ($pnpSewa == "") {
 		$pnpSewa = "0";
 	}
 
-	if ( $pnpSaku == "") {
+	if ($pnpSaku == "") {
 		$pnpSaku = "0";
 	}
 
@@ -711,9 +728,9 @@ elseif (isset($_POST['prpsl-pp-put'])) {
 			echo "green";
 		} catch (PDOException $e) {
 			$pdo->rollback();
-			if ( $state == 'devel' ) {
+			if ($state == 'devel') {
 				echo $e;
-			}elseif ($state == 'production') {
+			} elseif ($state == 'production') {
 				echo $e->getCode();
 			}
 		}
@@ -743,16 +760,14 @@ elseif (isset($_POST['prpsl-pp-put'])) {
 			echo "green";
 		} catch (PDOException $e) {
 			$pdo->rollback();
-			if ( $state == 'devel' ) {
+			if ($state == 'devel') {
 				echo $e;
-			}elseif ($state == 'production') {
+			} elseif ($state == 'production') {
 				echo $e->getCode();
 			}
 		}
 	}
-}
-
-elseif (isset($_POST['prpsl-file-put'])) {
+} elseif (isset($_POST['prpsl-file-put'])) {
 	$user 	 	= $_SESSION["access-login"];
 	$usrID	 	= $_SESSION["uID"];
 	$cnfgId  	= $_POST['flCnPut'];
@@ -785,7 +800,7 @@ elseif (isset($_POST['prpsl-file-put'])) {
 					$delFl->bindValue(":sttus", $status, PDO::PARAM_STR);
 					$delFl->bindValue(":user", $user, PDO::PARAM_STR);
 					$delFl->bindValue(":id", $fileId, PDO::PARAM_STR);
-					
+
 					if ($delFl->execute()) {
 						$target_file = $target_dir . "trash/" . $flname;
 						$del 	 	 = rename($link, $target_file);
@@ -821,12 +836,11 @@ elseif (isset($_POST['prpsl-file-put'])) {
 									$pdo->rollback();
 									echo "Gagal memasukkan data file upload baru.";
 								}
-
 							} catch (Exception $e) {
 								$pdo->rollback();
-								if ( $state == 'devel' ) {
+								if ($state == 'devel') {
 									echo $e;
-								}elseif ($state == 'production') {
+								} elseif ($state == 'production') {
 									echo $e->getCode();
 								}
 							}
@@ -837,17 +851,15 @@ elseif (isset($_POST['prpsl-file-put'])) {
 					}
 				} catch (Exception $e) {
 					$pdo->rollback();
-					if ( $state == 'devel' ) {
+					if ($state == 'devel') {
 						echo $e;
-					}elseif ($state == 'production') {
+					} elseif ($state == 'production') {
 						echo $e->getCode();
 					}
 				}
-
 			} else {
 				echo "gagal mengambil data file";
 			}
-
 		} else {
 			echo "";
 		}
@@ -884,9 +896,9 @@ elseif (isset($_POST['prpsl-file-put'])) {
 				}
 			} catch (Exception $e) {
 				$pdo->rollback();
-				if ( $state == 'devel' ) {
+				if ($state == 'devel') {
 					echo $e;
-				}elseif ($state == 'production') {
+				} elseif ($state == 'production') {
 					echo $e->getCode();
 				}
 			}
@@ -894,9 +906,7 @@ elseif (isset($_POST['prpsl-file-put'])) {
 			echo "";
 		}
 	}
-}
-
-elseif (isset($_POST['prpsl-pp-del'])) {
+} elseif (isset($_POST['prpsl-pp-del'])) {
 	$id 	= $_POST['data'];
 	$user 	= $_SESSION["access-login"];
 	$status = "delete";
@@ -914,15 +924,13 @@ elseif (isset($_POST['prpsl-pp-del'])) {
 		echo "green";
 	} catch (PDOException $e) {
 		$pdo->rollback();
-		if ( $state == 'devel' ) {
+		if ($state == 'devel') {
 			echo $e;
-		}elseif ($state == 'production') {
+		} elseif ($state == 'production') {
 			echo $e->getCode();
 		}
 	}
-}
-
-elseif (isset($_POST['prpsl-file-del'])) {
+} elseif (isset($_POST['prpsl-file-del'])) {
 	$user 	 	= $_SESSION["access-login"];
 	$usrID	 	= $_SESSION["uID"];
 	$fileId 	= $_POST['data'];
@@ -959,22 +967,18 @@ elseif (isset($_POST['prpsl-file-del'])) {
 					echo "green";
 				}
 			}
-
 		} catch (Exception $e) {
 			$pdo->rollback();
-			if ( $state == 'devel' ) {
+			if ($state == 'devel') {
 				echo $e;
-			}elseif ($state == 'production') {
+			} elseif ($state == 'production') {
 				echo $e->getCode();
 			}
 		}
-						
 	} else {
 		echo "data file tidak ditemukan";
 	}
-}
-
-elseif (isset($_POST['prpsl-kp-modal'])) {
+} elseif (isset($_POST['prpsl-kp-modal'])) {
 	$id 	= $_POST['data'];
 
 	$kpQRY 	= "SELECT * FROM prpdt WHERE prpdt_id = :id LIMIT 1";
@@ -988,7 +992,7 @@ elseif (isset($_POST['prpsl-kp-modal'])) {
 		$kpData = $kpData->fetchAll(PDO::FETCH_ASSOC);
 		$kpDate = date('m/d/Y', strtotime($kpData[0]['prpdt_dtprv']));
 
-	echo '
+		echo '
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header header-color-modal bg-color-5">
@@ -998,37 +1002,37 @@ elseif (isset($_POST['prpsl-kp-modal'])) {
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="basic-login-inner">
 						<form id="kp-put-form">
-							<input type="hidden" class="form-control" value="'.$kpData[0]['prpdt_id'].'" name="pp_num" />
+							<input type="hidden" class="form-control" value="' . $kpData[0]['prpdt_id'] . '" name="pp_num" />
 							<div class="form-group-inner">
 								<label class="pull-left">Nama Partai</label>
-								<input type="text" class="form-control" placeholder="Nama Partai" value="'.$kpData[0]['prpdt_nmpp'].'" name="pp_nm" />
+								<input type="text" class="form-control" placeholder="Nama Partai" value="' . $kpData[0]['prpdt_nmpp'] . '" name="pp_nm" />
 							</div>
 							<div class="form-group-inner">
 								<label class="pull-left">Alamat</label>
-								<input type="text" class="form-control" placeholder="Alamat" value="'.$kpData[0]['prpdt_drss'].'" name="pp_adr" />
+								<input type="text" class="form-control" placeholder="Alamat" value="' . $kpData[0]['prpdt_drss'] . '" name="pp_adr" />
 							</div>
 							<div class="form-group-inner">
 								<label class="pull-left">Nama Ketua</label>
-								<input type="text" class="form-control" placeholder="Nama Ketua" value="'.$kpData[0]['prpdt_nmld'].'" name="pp_ld" />
+								<input type="text" class="form-control" placeholder="Nama Ketua" value="' . $kpData[0]['prpdt_nmld'] . '" name="pp_ld" />
 							</div>
 							<div class="form-group-inner">
 								<label class="pull-left">Nama Bendahara</label>
-								<input type="text" class="form-control" placeholder="Nama Bendahara" value="'.$kpData[0]['prpdt_xch'].'" name="pp_exc" />
+								<input type="text" class="form-control" placeholder="Nama Bendahara" value="' . $kpData[0]['prpdt_xch'] . '" name="pp_exc" />
 							</div>
 							<div class="form-group-inner">
 								<label class="pull-left">Nama Sekretaris</label>
-								<input type="text" class="form-control" placeholder="Nama Sekretaris" value="'.$kpData[0]['prpdt_scrt'].'" name="pp_scr" />
+								<input type="text" class="form-control" placeholder="Nama Sekretaris" value="' . $kpData[0]['prpdt_scrt'] . '" name="pp_scr" />
 							</div>
 							<div class="form-group-inner data-custon-pick" id="data_1">
 								<label class="pull-left">Tanggal Pengesahan</label>
 								<div class="input-group date" style="width: 100%;">
 									<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-									<input type="text" class="form-control" value="'.$kpDate.'" name="pp_skdt">
+									<input type="text" class="form-control" value="' . $kpDate . '" name="pp_skdt">
 								</div>
 							</div>
 							<div class="form-group-inner">
 								<label class="pull-left">Nomor NPWP</label>
-								<input type="text" class="form-control" placeholder="Nomor NPWP" value="'.$kpData[0]['prpdt_npwp'].'" name="pp_npwp" />
+								<input type="text" class="form-control" placeholder="Nomor NPWP" value="' . $kpData[0]['prpdt_npwp'] . '" name="pp_npwp" />
 							</div>
 						</form>
 					</div>
@@ -1044,9 +1048,7 @@ elseif (isset($_POST['prpsl-kp-modal'])) {
 		<script src="../../assts/js/datapicker/datepicker-active.js"></script>
 	';
 	}
-}
-
-elseif (isset($_POST['prpsl-os-modal'])) {
+} elseif (isset($_POST['prpsl-os-modal'])) {
 	$id 	= $_POST['data'];
 
 	$osQRY 	= "SELECT * FROM prpdt_opskdt WHERE opskdt_id = :id LIMIT 1";
@@ -1058,81 +1060,79 @@ elseif (isset($_POST['prpsl-os-modal'])) {
 		echo "";
 	} else {
 		$osData = $osData->fetchAll(PDO::FETCH_ASSOC);
-	
-	echo '
+
+		echo '
 		<div class="modal-dialog">
-	        <div class="modal-content">
-	            <div class="modal-header header-color-modal bg-color-5">
-	                <h4 class="modal-title">Ubah Data Operasional Sekretariatan</h4>
-	            </div>
-	            <div class="modal-body">
-	                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-	                <div class="basic-login-inner">
-	                    <form id="os-put-form">
-	                    	<input type="hidden" class="form-control" value="'.$osData[0]['opskdt_id'].'" name="os_num" />
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">ATK</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_atk'].'" name="os_atk" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">Foto Copy</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_fc'].'" name="os_fc" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">Honorarium</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_hnr'].'" name="os_hnr" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">Belanja SDA / Tagihan</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_sda'].'" name="os_sda" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">Belanja Modal / Pengadaan</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_mdl'].'" name="os_mdl" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">Biaya Sewa</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_sewa'].'" name="os_sewa" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">Belanja Peralatan dan Perlengkapan Kantor</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_prpl'].'" name="os_perpel" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">Belanja Pemeliharaan Perlengkapan Kantor</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_pmkpn'].'" name="os_pepan" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">Belanja Pemeliharaan Peralatan Kantor</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_pmltn'].'" name="os_petan" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">BBM / Biaya Transportasi</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_trns'].'" name="os_trns" onkeyup="maskCurrency()" />
-	                        </div>
-	                        <div class="form-group-inner">
-	                            <label class="pull-left">Lainnya</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$osData[0]['opskdt_ln'].'" name="os_ln" onkeyup="maskCurrency()" />
-	                        </div>
-	                    </form>
-	                </div>
-	                </div>
-	            </div>
-	            <div class="modal-footer">
-	                <a data-dismiss="modal" href="#">Batalkan</a>
-	                <a style="cursor: pointer;" id="osPut" data-target="#os-put-form" onClick="osPut()">Simpan</a>
-	            </div>
-	        </div>
-	    </div>
-	    <!-- input-mask JS
-    	 ============================================ -->
+			<div class="modal-content">
+				<div class="modal-header header-color-modal bg-color-5">
+					<h4 class="modal-title">Ubah Data Operasional Sekretariatan</h4>
+				</div>
+				<div class="modal-body">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="basic-login-inner">
+						<form id="os-put-form">
+							<input type="hidden" class="form-control" value="' . $osData[0]['opskdt_id'] . '" name="os_num" />
+							<div class="form-group-inner">
+								<label class="pull-left">ATK</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_atk'] . '" name="os_atk" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">Foto Copy</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_fc'] . '" name="os_fc" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">Honorarium</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_hnr'] . '" name="os_hnr" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">Belanja SDA / Tagihan</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_sda'] . '" name="os_sda" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">Belanja Modal / Pengadaan</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_mdl'] . '" name="os_mdl" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">Biaya Sewa</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_sewa'] . '" name="os_sewa" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">Belanja Peralatan dan Perlengkapan Kantor</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_prpl'] . '" name="os_perpel" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">Belanja Pemeliharaan Perlengkapan Kantor</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_pmkpn'] . '" name="os_pepan" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">Belanja Pemeliharaan Peralatan Kantor</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_pmltn'] . '" name="os_petan" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">BBM / Biaya Transportasi</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_trns'] . '" name="os_trns" onkeyup="maskCurrency()" />
+							</div>
+							<div class="form-group-inner">
+								<label class="pull-left">Lainnya</label>
+								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_ln'] . '" name="os_ln" onkeyup="maskCurrency()" />
+							</div>
+						</form>
+					</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<a data-dismiss="modal" href="#">Batalkan</a>
+					<a style="cursor: pointer;" id="osPut" data-target="#os-put-form" onClick="osPut()">Simpan</a>
+				</div>
+			</div>
+		</div>
+		<!-- input-mask JS
+		============================================ -->
 		<script src="../../assts/js/input-mask/jquery.maskMoney.js"></script>
 		<script src="../../assts/js/input-mask/maskCurrency.js"></script>
 	';
 	}
-} 
-
-elseif (isset($_POST['prpsl-pp-put-modal'])) {
+} elseif (isset($_POST['prpsl-pp-put-modal'])) {
 	$id 	= $_POST['data'];
 	$cont 	= $_POST['condition'];
 
@@ -1159,7 +1159,6 @@ elseif (isset($_POST['prpsl-pp-put-modal'])) {
 			$pnpSewa 	= $ppData[0]['pnpldt_swa'];
 			$pnpSaku 	= $ppData[0]['pnpldt_sku'];
 		}
-
 	} else {
 		$ttle 		= "Tambah Data Pendidikan Politik";
 		$pnpId 		= $id;
@@ -1177,56 +1176,56 @@ elseif (isset($_POST['prpsl-pp-put-modal'])) {
 
 	if (isset($cont)) {
 
-	echo '
+		echo '
 		<div class="modal-dialog">
 	        <div class="modal-content">
 	            <div class="modal-header header-color-modal bg-color-5">
-	                <h4 class="modal-title">'.$ttle.'</h4>
+	                <h4 class="modal-title">' . $ttle . '</h4>
 	            </div>
 	            <div class="modal-body">
 	                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 	                <div class="basic-login-inner">
 	                    <form id="pp-put-form">
-	                    	<input type="hidden" class="form-control" value="'.$pnpId.'" name="pnp_num" />
+	                    	<input type="hidden" class="form-control" value="' . $pnpId . '" name="pnp_num" />
 	                    	<div class="form-group-inner">
 	                            <label class="pull-left">Nama Kegiatan</label>
-	                            <input type="text" class="form-control" placeholder="Nama Kegiatan" value="'.$pnpName.'" name="pnp_nm" />
+	                            <input type="text" class="form-control" placeholder="Nama Kegiatan" value="' . $pnpName . '" name="pnp_nm" />
 	                        </div>
 	                        <div class="form-group-inner">
 	                            <label class="pull-left">ATK</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$pnpAtk.'" name="pnp_atk" onkeyup="maskCurrency()" />
+	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $pnpAtk . '" name="pnp_atk" onkeyup="maskCurrency()" />
 	                        </div>
 	                        <div class="form-group-inner">
 	                            <label class="pull-left">Belanja Cetak</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$pnpCetak.'" name="pnp_ctk" onkeyup="maskCurrency()" />
+	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $pnpCetak . '" name="pnp_ctk" onkeyup="maskCurrency()" />
 	                        </div>
 	                        <div class="form-group-inner">
 	                            <label class="pull-left">Makan dan Minum</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$pnpMkmn.'" name="pnp_mkmn" onkeyup="maskCurrency()" />
+	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $pnpMkmn . '" name="pnp_mkmn" onkeyup="maskCurrency()" />
 	                        </div>
 	                        <div class="form-group-inner">
 	                            <label class="pull-left">SPPD</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$pnpSppd.'" name="pnp_sppd" onkeyup="maskCurrency()" />
+	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $pnpSppd . '" name="pnp_sppd" onkeyup="maskCurrency()" />
 	                        </div>
 	                        <div class="form-group-inner">
 	                            <label class="pull-left">Honorarium</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$pnpHonor.'" name="pnp_hnr" onkeyup="maskCurrency()" />
+	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $pnpHonor . '" name="pnp_hnr" onkeyup="maskCurrency()" />
 	                        </div>
 	                        <div class="form-group-inner">
 	                            <label class="pull-left">Transportasi</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$pnpTrnspr.'" name="pnp_trns" onkeyup="maskCurrency()" />
+	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $pnpTrnspr . '" name="pnp_trns" onkeyup="maskCurrency()" />
 	                        </div>
 	                        <div class="form-group-inner">
 	                            <label class="pull-left">Biaya Gedung</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$pnpSaku.'" name="pnp_sku" onkeyup="maskCurrency()" />
+	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $pnpSaku . '" name="pnp_sku" onkeyup="maskCurrency()" />
 	                        </div>
 	                        <div class="form-group-inner">
 	                            <label class="pull-left">Uang Saku</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$pnpSewa.'" name="pnp_swa" onkeyup="maskCurrency()" />
+	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $pnpSewa . '" name="pnp_swa" onkeyup="maskCurrency()" />
 	                        </div>
 	                        <div class="form-group-inner">
 	                            <label class="pull-left">Lainnya</label>
-	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="'.$pnpLain.'" name="pnp_ln" onkeyup="maskCurrency()" />
+	                            <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $pnpLain . '" name="pnp_ln" onkeyup="maskCurrency()" />
 	                        </div>
 	                    </form>
 	                </div>
@@ -1234,7 +1233,7 @@ elseif (isset($_POST['prpsl-pp-put-modal'])) {
 	            </div>
 	            <div class="modal-footer">
 	                <a data-dismiss="modal" href="#">Batalkan</a>
-	                <a style="cursor: pointer;" id="ppPut" data-target="#pp-put-form" data-cont="'.$cont.'" onClick="ppPut($(this))">Simpan</a>
+	                <a style="cursor: pointer;" id="ppPut" data-target="#pp-put-form" data-cont="' . $cont . '" onClick="ppPut($(this))">Simpan</a>
 	            </div>
 	        </div>
 	    </div>
@@ -1244,9 +1243,7 @@ elseif (isset($_POST['prpsl-pp-put-modal'])) {
 		<script src="../../assts/js/input-mask/maskCurrency.js"></script>
 	';
 	}
-}
-
-elseif (isset($_POST['prpsl-del-modal'])) {
+} elseif (isset($_POST['prpsl-del-modal'])) {
 	$id 	= $_POST['data'];
 
 	echo '
@@ -1259,14 +1256,12 @@ elseif (isset($_POST['prpsl-del-modal'])) {
             </div>
             <div class="modal-footer footer-modal-admin">
                 <a data-dismiss="modal" style="cursor: pointer;">Batalkan</a>
-                <a style="cursor: pointer;" onclick="delPrpsl('.$id.')">Hapus</a>
+                <a style="cursor: pointer;" onclick="delPrpsl(' . $id . ')">Hapus</a>
             </div>
         </div>
     </div>
 	';
-}
-
-elseif (isset($_POST['prpsl-pp-del-modal'])) {
+} elseif (isset($_POST['prpsl-pp-del-modal'])) {
 	$id 	= $_POST['data'];
 
 	echo '
@@ -1279,14 +1274,12 @@ elseif (isset($_POST['prpsl-pp-del-modal'])) {
             </div>
             <div class="modal-footer footer-modal-admin">
                 <a data-dismiss="modal" style="cursor: pointer;">Batalkan</a>
-                <a style="cursor: pointer;" onclick="delPP('.$id.')">Hapus</a>
+                <a style="cursor: pointer;" onclick="delPP(' . $id . ')">Hapus</a>
             </div>
         </div>
     </div>
 	';
-}
-
-elseif (isset($_POST['prpsl-fl-modal'])) {
+} elseif (isset($_POST['prpsl-fl-modal'])) {
 	$id 	= $_POST['data'];
 
 	echo '
@@ -1299,16 +1292,12 @@ elseif (isset($_POST['prpsl-fl-modal'])) {
             </div>
             <div class="modal-footer footer-modal-admin">
                 <a data-dismiss="modal" style="cursor: pointer;">Batalkan</a>';
-    if ($id != "not") {
-    	echo '<a style="cursor: pointer;" onclick="delFile('.$id.')">Hapus</a>';
-    } else {
-    	echo '<a data-dismiss="modal" style="cursor: pointer;">Hapus</a>';
-    }
-    echo '</div></div></div>';
-}
-
-else {
+	if ($id != "not") {
+		echo '<a style="cursor: pointer;" onclick="delFile(' . $id . ')">Hapus</a>';
+	} else {
+		echo '<a data-dismiss="modal" style="cursor: pointer;">Hapus</a>';
+	}
+	echo '</div></div></div>';
+} else {
 	echo "privilege error";
 }
-
-?>

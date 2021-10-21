@@ -45,6 +45,8 @@
                         <?php
                         if ($pData != "0") : //All proposal
                             for ($i = 0; $i < $pCount; $i++) :
+                                $ppId = array();
+                                $dataPp = array();
                                 $date    = date('d M Y', strtotime($pData[$i]['created_date']));
                                 $datePrv = date('d M Y', strtotime($pData[$i]['prpdt_dtprv']));
                                 $pId     = $pData[$i]['prpdt_id'];
@@ -58,8 +60,7 @@
                                 if ($osData->rowCount() < 1) {
                                     $osId = "0";
                                 } else {
-                                    $osId[]      = $osData->fetchAll(PDO::FETCH_ASSOC); //data proposal = $pData
-                                    // var_dump($osId[$i][0]["opskdt_id"]);
+                                    $osId[] = $osData->fetchAll(PDO::FETCH_ASSOC); //data proposal = $pData
                                 }
 
                                 $itmOsQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID";
@@ -75,37 +76,44 @@
                                 }
 
                                 $ppQRY   = "SELECT pnpldt_id FROM prpdt_pnpldt WHERE prpdt_id = :postID AND sttus = 'publish' ";
+                                $ppData = "";
                                 $ppData  = $pdo->prepare($ppQRY);
                                 $ppData->bindValue(":postID", $pId, PDO::PARAM_STR);
                                 $ppData->execute();
                                 if ($ppData->rowCount() < 1) {
                                     $ppId = "0";
                                 } else {
-                                    $ppId[]      = $ppData->fetchAll(PDO::FETCH_ASSOC); //data proposal = $pData
+                                    $ppId[] = $ppData->fetchAll(PDO::FETCH_COLUMN); //data proposal = $pData
+                                    $array = call_user_func_array('array_merge', $ppId);
                                     $ppCount = $ppData->rowCount();
                                 }
-                                $array = call_user_func_array('array_merge', $ppId);
-                                // print("<pre>" . print_r($array, true) . "</pre>");
-                                // print_r(count($array));
+                                for ($p = 0; $p < count($array); $p++) {
+                                    $itmPpQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :postID";
+                                    $itmData  = $pdo->prepare($itmPpQRY);
+                                    $itmData->bindValue(":postID", $array[$p], PDO::PARAM_STR);
+                                    $hasil = $itmData->execute();
+                                    $dataPp[] = $itmData->fetchAll(PDO::FETCH_ASSOC);
+                                }
 
-                                $itmPpQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :postID";
-                                $itmData  = $pdo->prepare($itmPpQRY);
-                                $itmData->bindValue(":postID", $ppId[$i][0]["pnpldt_id"], PDO::PARAM_STR);
-                                $hasil = $itmData->execute();
-                                $datapp = $itmData->fetchAll(PDO::FETCH_ASSOC);
-                                // print("<pre>" . print_r($datapp, true) . "</pre>");
+                                if (count($dataPp) > 0) {
+                                    $ppCount = count($dataPp);
+                                    foreach ($dataPp as $datas) {
 
-
-                                if ($itmData->rowCount() > 0) {
-                                    $ppitmCount = $itmData->rowCount();
-
-                                    foreach ($datapp as $data) {
-                                        $ttlPP += $data['value'];
+                                        foreach ($datas as $data) {
+                                            if ($data['item'] != "Nama Kegiatan") {
+                                                $ttlPP += $data['value'];
+                                            }
+                                        }
                                     }
                                 }
 
+                                // print("<pre>" . print_r($dataPp, true) . "</pre>");
+
+
 
                                 $ttlRAB = $ttlOS + $ttlPP;
+                                $pOS = round(((float)$ttlOS / (float)$ttlRAB) * 100, 2);
+                                $pPP = round(((float)$ttlPP / (float)$ttlRAB) * 100, 2);
 
                                 $fcQRY   = "SELECT pcnfg_id, pcnfg_nm FROM pile_cnfg WHERE type = 'rab'";
                                 $fcData  = $pdo->prepare($fcQRY);
@@ -125,10 +133,10 @@
                                                             echo $nme . " / " . $pData[$i]['prpdt_nmpp'] . " / " . $date; ?></span>
                                         </div>
                                         <div class="col-lg-2 col-md-2 col-sm-0 col-xs-0 td pad-0-15">
-                                            <span>Rp <?php echo number_format($ttlOS, 0, ",", ".") ?></span>
+                                            <span>Rp <?php echo number_format($ttlOS, 0, ",", ".") . "(" . $pOS . "%)" ?></span>
                                         </div>
                                         <div class="col-lg-2 col-md-2 col-sm-0 col-xs-0 td pad-0-15">
-                                            <span class="text-center">Rp <?php echo number_format($ttlPP, 0, ",", ".") ?></span>
+                                            <span class="text-center">Rp <?php echo number_format($ttlPP, 0, ",", ".") . "("  . $pPP . "%)" ?></span>
                                         </div>
                                         <div class="col-lg-2 col-md-2 col-sm-0 col-xs-0 td pad-0-15">
                                             <span class="text-center">Rp <?php echo number_format($ttlRAB, 0, ",", ".") ?></span>
@@ -140,7 +148,7 @@
                                         </div>
                                         <div class="col-lg-1 col-md-1 col-sm-0 col-xs-0 td">
                                             <span class="text-center">
-                                                <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslDelete" data-post="<?php echo $pId ?>" title="Trash" class="pd-setting-ed" onclick="delModal($(this))"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                                                <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslDelete" data-post="<?php echo $pId; ?>" title="Trash" class="pd-setting-ed" onclick="delModal($(this))"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
                                             </span>
                                         </div>
                                     </div>
@@ -333,11 +341,11 @@
 
                                                             <?php
                                                             $totalPp = 0;
-                                                            for ($a = 0; $a < $ppCount; $a++) :
+                                                            foreach ($dataPp as $datas) {
                                                             ?>
 
                                                                 <tr style="border-top: 1px solid #e9ecef;border-bottom: 1px solid  #90A4AE;">
-                                                                    <td colspan="3" style="text-transform: capitalize; font-weight: bold;"><?php echo $ppAllDt[$a]['pnpldt_nm']; ?></td>
+                                                                    <td colspan="3" style="text-transform: capitalize; font-weight: bold;"><?php echo $datas[0]['value']; ?></td>
                                                                     <td class="text-right">
                                                                         <span style="display: flex;">
                                                                             <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslPPPut" data-post="<?php echo $ppAllDt[$a]['pnpldt_id']; ?>" data-ttl="put" title="Edit" class="pd-setting-ed" onclick="ppModal($(this))"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
@@ -346,16 +354,22 @@
                                                                     </td>
                                                                 </tr>
                                                                 <?php
-                                                                foreach ($datapp as $data) {
+                                                                foreach ($datas as $data) {
                                                                 ?>
                                                                     <tr style="border-top: 1px solid #e9ecef;">
                                                                         <td><?php echo $data['item']; ?></td>
                                                                         <td>:</td>
                                                                         <td> Rp </td>
-                                                                        <td class="text-right"><?php echo number_format($data['value'], 0, ",", "."); ?></td>
+                                                                        <td class="text-right"><?php
+                                                                                                if ($data['item'] == 'Nama Kegiatan') {
+                                                                                                    echo $data['value'];
+                                                                                                } else {
+                                                                                                    echo number_format($data['value'], 0, ",", ".");
+                                                                                                } ?></td>
+
                                                                     </tr><?php $totalPp += $data['value'];
-                                                                        } ?>
-                                                            <?php endfor; ?>
+                                                                        }
+                                                                    } ?>
 
 
                                                             <tr style="border-top: 1px solid  #90A4AE; font-weight: bold;">

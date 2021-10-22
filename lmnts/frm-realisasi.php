@@ -7,166 +7,14 @@
                 <!-- form header -->
                 <div class="sparkline10-hd">
                     <div class="main-sparkline10-hd">
-                        <h1>Data Kepengurusan</h1>
+                        <h1>Realisasi</h1>
                     </div>
-                </div>
-                <div class="sparkline10-graph">
-                    <div class="basic-login-form-ad">
-                        <div class="row">
-                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                <div class="chosen-select-single mg-b-20">
-                                    <div class="form-group-inner">
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-right pull-right-pro">Nama Partai</label>
-                                            </div>
-                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                                                <input type="text" class="form-control" placeholder="Nama Partai" name="pp_nm" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group-inner">
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-right pull-right-pro">Alamat</label>
-                                            </div>
-                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                                                <input type="text" class="form-control" placeholder="Alamat" name="pp_adr" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group-inner">
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-right pull-right-pro">Nama Ketua</label>
-                                            </div>
-                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                                                <input type="text" class="form-control" placeholder="Nama Ketua" name="pp_ld" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group-inner">
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-right pull-right-pro">Nama Bendahara</label>
-                                            </div>
-                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                                                <input type="text" class="form-control" placeholder="Nama Bendahara" name="pp_exc" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group-inner">
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-right pull-right-pro">Nama Sekretaris</label>
-                                            </div>
-                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                                                <input type="text" class="form-control" placeholder="Nama Sekretaris" name="pp_scr" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group-inner data-custon-pick" id="data_1">
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-right pull-right-pro">Tanggal Pengesahan</label>
-                                            </div>
-                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                                                <div class="input-group date">
-                                                    <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                                                    <input type="text" class="form-control" value="" name="pp_skdt">
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="form-group-inner data-custon-pick" id="data_1">
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2">Nomor NPWP</label>
-                                            </div>
-                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                                                <input type="text" class="form-control" placeholder="Nomor NPWP" name="pp_npwp" />
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-
-            <div class="sparkline10-list mg-tb-30">
-                <!-- form header -->
-                <div class="sparkline10-hd">
-                    <div class="main-sparkline10-hd">
-                        <h1>Dokumen Persyaratan</h1>
-                    </div>
-                    <div class="panel-group adminpro-custon-design" id="accordion">
-
-                        <div class="panel panel-default">
-                            <a data-toggle="collapse" data-parent="#accordionDoc" href="#collapseDoc">
-                                <div class="panel-heading accordion-head">
-                                    <h4 class="panel-title">List Dokumen Upload RAB</h4>
-                                </div>
-                            </a>
-                            <div id="collapseDoc" class="panel-collapse panel-ic collapse">
-                                <div class="panel-body admin-panel-content">
-
-                                    <div class="form-group-inner">
-                                        <div class="row">
-
-                                            <?php
-                                            $fileQRY   = "SELECT pcnfg_id, pcnfg_nm FROM pile_cnfg WHERE type = 'rab'";
-                                            $fileData  = $pdo->prepare($fileQRY);
-                                            $fileData->execute();
-
-                                            if ($fileData->rowCount() > 0) :
-                                                $fileDtCount  = $fileData->rowCount();
-                                                $fileAllDt    = $fileData->fetchAll(PDO::FETCH_ASSOC);
-
-                                                for ($i = 0; $i < $fileDtCount; $i++) : $ind = $i + 1;
-                                            ?>
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                        <label class="login2 pull-left"><?php echo $fileAllDt[$i]['pcnfg_nm']; ?></label>
-                                                    </div>
-                                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-
-                                                        <div class="file-upload-inner file-upload-inner-right ts-forms">
-                                                            <div class="input append-small-btn">
-                                                                <div class="file-button">
-                                                                    Browse
-                                                                    <input type="file" accept="application/pdf" name="<?php echo 'flName-' . $ind ?>" id="<?php echo 'inpFile-' . $ind ?>">
-                                                                </div>
-                                                                <input type="text" id="<?php echo 'txtFile-' . $ind ?>" placeholder="no file selected" name="<?php echo 'flLabel-' . $ind ?>">
-                                                                <input type="hidden" name="<?php echo 'flCnfg-' . $ind ?>" value="<?php echo $fileAllDt[$i]['pcnfg_id'] ?>">
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                            <?php endfor;
-                                            endif; ?>
-
-                                        </div>
-                                    </div>
-
-                                </div>
-                            </div>
-                        </div>
-
-                    </div>
-                </div>
-            </div>
-
-        </div>
-
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-            <div class="sparkline10-list mg-tb-30">
-                <!-- form header -->
-                <div class="sparkline10-hd">
-                    <div class="main-sparkline10-hd">
-                        <h1>RAB</h1>
-                    </div>
+                    <?php
+                    $qry = "SELECT COUNT(`pnpldt_id`) AS JML FROM `prpdt_pnpldt` WHERE `prpdt_id`= ?";
+                    $jml = $pdo->prepare($qry);
+                    $jml->excute($pId);
+                    $hasil = $jml->fetchAll()
+                    ?>
                     <div class="panel-group adminpro-custon-design" id="accordion">
 
                         <div class="panel panel-default">
@@ -188,13 +36,22 @@
                                             </button>
                                         </div>
 
-
                                         <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " style="padding: 0;">
                                             <!-- form repeater start -->
                                             <div data-repeater-list="kgD4tforLo0P">
                                                 <div data-repeater-item>
                                                     <!-- form wrapper start -->
                                                     <div class="sparkline10-list" style="margin-top: 10px;">
+
+                                                        <!-- <div class="form-group-inner">
+                                                        <div class="row">
+                                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                                                <div class="btn-group btn-custom-groups btn-custom-groups-one pull-right">
+                                                                    <button type="button" data-repeater-delete class="btn btn-primary"><i class="fa fa-times adminpro-danger-error" aria-hidden="true"></i></button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
 
                                                         <?php
                                                         $fileQRY   = "SELECT id_item, item FROM item_kegiatan WHERE kategori_item = 'a'";

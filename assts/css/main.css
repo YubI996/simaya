@@ -140,6 +140,9 @@ textarea {
 .text-right {
     text-align: right !important;
 }
+.total-red {
+    background-color: #e10303b0;
+}
 
 .text-left {
     text-align: left !important;

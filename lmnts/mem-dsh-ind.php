@@ -57,13 +57,14 @@
                                 $osData  = $pdo->prepare($osQRY);
                                 $osData->bindValue(":postID", $pId, PDO::PARAM_STR);
                                 $osData->execute();
+
                                 if ($osData->rowCount() < 1) {
                                     $osId = "0";
                                 } else {
                                     $osId[] = $osData->fetchAll(PDO::FETCH_ASSOC); //data proposal = $pData
                                 }
 
-                                $itmOsQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID";
+                                $itmOsQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID AND kategori = 'p'";
                                 $itmData  = $pdo->prepare($itmOsQRY);
                                 $itmData->bindValue(":postID", $osId[$i][0]["opskdt_id"], PDO::PARAM_STR);
                                 $hasil = $itmData->execute();
@@ -88,7 +89,7 @@
                                     $ppCount = $ppData->rowCount();
                                 }
                                 for ($p = 0; $p < count($array); $p++) {
-                                    $itmPpQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :postID";
+                                    $itmPpQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :postID AND kategori = 'p'";
                                     $itmData  = $pdo->prepare($itmPpQRY);
                                     $itmData->bindValue(":postID", $array[$p], PDO::PARAM_STR);
                                     $hasil = $itmData->execute();
@@ -112,8 +113,14 @@
 
 
                                 $ttlRAB = $ttlOS + $ttlPP;
-                                $pOS = round(((float)$ttlOS / (float)$ttlRAB) * 100, 2);
-                                $pPP = round(((float)$ttlPP / (float)$ttlRAB) * 100, 2);
+                                if ($ttlRAB != 0) {
+                                    $pOS = round(((float)$ttlOS / (float)$ttlRAB) * 100, 2);
+                                    $pPP = round(((float)$ttlPP / (float)$ttlRAB) * 100, 2);
+                                } else {
+                                    $pOS = '0';
+                                    $pPP = '0';
+                                }
+
 
                                 $fcQRY   = "SELECT pcnfg_id, pcnfg_nm FROM pile_cnfg WHERE type = 'rab'";
                                 $fcData  = $pdo->prepare($fcQRY);
@@ -316,7 +323,7 @@
 
 
                                                             <tr style="border-top: 1px solid  #90A4AE; font-weight: bold;">
-                                                                <td>Total</td>
+                                                                <td>Total Anggaran Operasional Sekretariat</td>
                                                                 <td>:</td>
                                                                 <td> Rp </td>
                                                                 <td class="text-right"><?php echo number_format($totalOs, 0, ",", ".") ?></td>
@@ -373,7 +380,7 @@
 
 
                                                             <tr style="border-top: 1px solid  #90A4AE; font-weight: bold;">
-                                                                <td>Total</td>
+                                                                <td>Total Anggaran Pendidikan Politik</td>
                                                                 <td>:</td>
                                                                 <td> Rp </td>
                                                                 <td class="text-right"><?php echo number_format($totalPp, 0, ",", ".") ?></td>

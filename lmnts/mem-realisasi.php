@@ -7,11 +7,6 @@
                         <div class="col-lg-9 col-md-9">
                             <h1>List Proposal</h1>
                         </div>
-                        <div class="col-lg-3 col-md-3">
-                            <div class="add-product">
-                                <a href="./tambah-realisasi.php">Add Realisasi</a>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -76,7 +71,12 @@
                                 // print("<pre>" . print_r($dataos, true) . "</pre>");
 
                                 // fetch data realisasi Operasional Skretariat=>id real os
-                                $osRQRY   = "SELECT reaops_id FROM prpdt_rea_opskdt WHERE prpdt_id = :postID AND sttus = 'publish' ";
+                                $osRQRY   =
+                                    "SELECT prpdt_rea_opskdt.reaops_id AS reaops_id
+                                FROM prpdt_rea_opskdt 
+                                INNER JOIN prpdt_opskdt
+                                ON prpdt_rea_opskdt.opskdt_id = prpdt_opskdt.opskdt_id
+                                WHERE prpdt_opskdt.prpdt_id = :postID AND prpdt_rea_opskdt.sttus = 'publish' ";
                                 $osRData  = $pdo->prepare($osRQRY);
                                 $osRData->bindValue(":postID", $pId, PDO::PARAM_STR);
                                 $osRData->execute();
@@ -95,7 +95,7 @@
                                 // print("<pre>" . print_r($dataos, true) . "</pre>");
                                 if ($itmDataR->rowCount() > 0) {
                                     foreach ($dataosR as $data) {
-                                        $ttlOS += $data['value'];
+                                        $ttlROS += $data['value'];
                                     }
                                 }
                                 // $aray = array_combine($dataos, $dataosR);
@@ -133,19 +133,71 @@
                                             }
                                         }
                                     }
+                                    // print_r($dataPp);
+                                    // $pnp =
+                                    //     call_user_func_array('array_merge', $dataPp);
+                                    // $pnp =
+                                    // array_reduce($dataPp, 'array_merge');
+                                    // $pnp = implode(",", $pnp);
+                                    // print("<pre>" . print_r($pnp, true) . "</pre>");
                                 }
 
+                                // fetch data realisasi Pendidikan Politik=>id realisasi pp
+                                $ppRQRY   = "SELECT prpdt_rea_pnpldt.reapnd_id AS reapnp_id
+                                FROM prpdt_rea_pnpldt 
+                                INNER JOIN prpdt_pnpldt
+                                ON prpdt_rea_pnpldt.pnpldt_id = prpdt_pnpldt.pnpldt_id
+                                WHERE prpdt_pnpldt.prpdt_id = :postID AND prpdt_rea_pnpldt.sttus = 'publish'";
+                                $ppRData = "";
+                                $ppRData  = $pdo->prepare($ppRQRY);
+                                $ppRData->bindValue(":postID", $pId, PDO::PARAM_STR);
+                                $ppRData->execute();
+                                if ($ppRData->rowCount() < 1) {
+                                    $ppRId = "0";
+                                } else {
+                                    $ppRId[] = $ppRData->fetchAll(PDO::FETCH_COLUMN); //data realisasi = $pData
+                                    $arrayRPp = call_user_func_array('array_merge', $ppRId);
+                                    $ppRCount = $ppRData->rowCount();
+                                }
+                                // fetch data item realisasi Pendidikan Politik=> pp items and their corresponding value
+                                for ($p = 0; $p < count($arrayRPp); $p++) {
+                                    $itmRPpQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :postID AND kategori = 'r'";
+                                    $itmRData  = $pdo->prepare($itmRPpQRY);
+                                    $itmRData->bindValue(":postID", $array[$p], PDO::PARAM_STR);
+                                    $hasilRPp = $itmRData->execute();
+                                    $dataRPp[] = $itmRData->fetchAll(PDO::FETCH_ASSOC);
+                                }
+
+                                if (count($dataRPp) > 0) {
+                                    $ppRCount = count($dataRPp);
+                                    foreach ($dataRPp as $datas) {
+
+                                        foreach ($datas as $data) {
+                                            if ($data['item'] != "Nama Kegiatan") {
+                                                $ttlRPP += $data['value'];
+                                            }
+                                        }
+                                    }
+                                }
                                 // print("<pre>" . print_r($dataPp, true) . "</pre>");
 
 
 
                                 $ttlRAB = $ttlOS + $ttlPP;
+                                $ttlRRAB = $ttRlOS + $ttlRPP;
                                 if ($ttlRAB != 0) {
                                     $pOS = round(((float)$ttlOS / (float)$ttlRAB) * 100, 2);
                                     $pPP = round(((float)$ttlPP / (float)$ttlRAB) * 100, 2);
                                 } else {
                                     $pOS = '0';
                                     $pPP = '0';
+                                }
+                                if ($ttlRRAB != 0) {
+                                    $pROS = round(((float)$ttlROS / (float)$ttlRRAB) * 100, 2);
+                                    $pRPP = round(((float)$ttlRPP / (float)$ttlRRAB) * 100, 2);
+                                } else {
+                                    $pROS = '0';
+                                    $pRPP = '0';
                                 }
 
                                 $fcQRY   = "SELECT pcnfg_id, pcnfg_nm FROM pile_cnfg WHERE type = 'realisasi'";
@@ -174,10 +226,15 @@
                                         <div class="col-lg-2 col-md-2 col-sm-0 col-xs-0 td pad-0-15">
                                             <span class="text-center">Rp <?php echo number_format($ttlRAB, 0, ",", ".") ?></span>
                                         </div>
-                                        <div class="col-lg-3 col-md-3 col-sm-0 col-xs-0 td">
+                                        <div class="col-lg-1 col-md-1 col-sm-0 col-xs-0 td">
                                             <span class="text-right">
                                                 <button data-toggle="collapse" data-parent="#accordionWrap1" href="<?php echo '#accordion' . $i ?>" class="pd-setting">Detail</button>
                                             </span>
+                                        </div>
+                                        <div class="col-lg-2 col-md-2 col-sm-0 col-xs-0 td pad-0-15">
+                                            <div class="add-product">
+                                                <a href="./tambah-realisasi.php">Add Realisasi</a>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -278,7 +335,8 @@
                                                                     <h4 class="mg-0">Operasional Sekretariatan</h4>
                                                                 </td>
                                                                 <td class="text-right">
-                                                                    <span class="pull-right"><button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslOSPut" data-post="<?php echo $osAllDt[0]['opskdt_id']; ?>" title="Edit" class="pd-setting-ed" onclick="osModal($(this))"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button></span>
+                                                                    <!-- Modal Edit OS -->
+                                                                    <span class="pull-right"><button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslOSPut" data-post="<?php echo $dataos[0]['opskdt_id']; ?>" title="Edit" class="pd-setting-ed" onclick="osModal($(this))"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button></span>
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -307,13 +365,14 @@
 
 
                                                             <tr style="border-top: 1px solid  #90A4AE; font-weight: bold;">
-                                                                <td>Total Anggaran Operasional Sekretariat</td>
-                                                                <td>:</td>
-                                                                <td class="total-red"> Rp </td>
-                                                                <td class="text-right total-red"><?php echo number_format($totalOs, 0, ",", ".") ?></td>
-                                                                <td class="total-red"></td>
-                                                                <td class="total-red"> Rp </td>
-                                                                <td class="text-right total-red"><?php echo number_format($totalOsR, 0, ",", ".") ?></td>
+                                                                <?php $red = $totalOs != $totalOsR ? 'total-red' : '' ?>
+                                                                <td class="<?php echo $red; ?>">Total Anggaran Operasional Sekretariat</td>
+                                                                <td class="<?php echo $red; ?>">:</td>
+                                                                <td class="<?php echo $red; ?>"> Rp</td>
+                                                                <td class="text-right <?php echo $red; ?>"><?php echo number_format($totalOs, 0, ",", ".") ?></td>
+                                                                <td class="<?php echo $red; ?>"></td>
+                                                                <td class="<?php echo $red; ?>"> Rp </td>
+                                                                <td class="text-right <?php echo $red; ?>"><?php echo number_format($totalOsR, 0, ",", ".") ?></td>
                                                             </tr>
                                                         </table>
                                                     </div>
@@ -339,42 +398,64 @@
 
                                                         <?php
                                                         $totalPp = 0;
-                                                        foreach ($dataPp as $datas) {
+                                                        foreach ($dataPp as $idx1 => $datas) {
                                                         ?>
 
                                                             <tr style="border-top: 1px solid #e9ecef;border-bottom: 1px solid  #90A4AE;">
-                                                                <td colspan="3" style="text-transform: capitalize; font-weight: bold;"><?php echo $datas[0]['value']; ?></td>
+                                                                <td colspan="3" style="text-transform: capitalize; font-weight: bold;"><?php echo $datas[0]['value'];
+                                                                                                                                        print_r() ?></td>
                                                                 <td class="text-right">
                                                                     <span style="display: flex;">
-                                                                        <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslPPPut" data-post="<?php echo $ppAllDt[$a]['pnpldt_id']; ?>" data-ttl="put" title="Edit" class="pd-setting-ed" onclick="ppModal($(this))"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
-                                                                        <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslPPDel" data-post="<?php echo $ppAllDt[$a]['pnpldt_id']; ?>" data-ttl="del" title="Trash" class="pd-setting-ed" onclick="ppModal($(this))"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
+                                                                        <!-- Edit PP-->
+                                                                        <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslPPPut" data-post="<?php echo $datas[0]['pnpldt_id']; ?>" data-ttl="put" title="Edit<?php echo $datas[0]['pnpldt_id']; ?>" class="pd-setting-ed" onclick="sModal($(this))"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+                                                                        <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslsDel" data-post="<?php echo $dataPp[0]['pnpldt_id']; ?>" data-ttl="del" title="Trash<?php echo $dataPp[0]['pnpldt_id']; ?>" class="pd-setting-ed" onclick="ppModal($(this))"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
                                                                     </span>
                                                                 </td>
                                                             </tr>
                                                             <?php
-                                                            foreach ($datas as $data) {
+                                                            foreach ($datas as $idx2 => $data) {
+
                                                             ?>
                                                                 <tr style="border-top: 1px solid #e9ecef;">
                                                                     <td><?php echo $data['item']; ?></td>
                                                                     <td>:</td>
-                                                                    <td> Rp </td>
+                                                                    <?php
+                                                                    if ($data['item'] == 'Nama Kegiatan') {
+                                                                        echo "<td>  </td>
+                                                                    <td class=" . "text-right" . ">" . $data['value'];
+                                                                        $nama = true;
+                                                                    } else {
+                                                                        echo "<td> Rp </td>
+                                                                    <td class=" . "text-right" . ">" . number_format($data['value'], 0, ",", ".");
+                                                                    } ?></td>
+
+                                                                    <td></td>
                                                                     <td class="text-right"><?php
-                                                                                            if ($data['item'] == 'Nama Kegiatan') {
-                                                                                                echo $data['value'];
+                                                                                            if ($nama) {
+                                                                                                echo "<td>  </td>
+                                                                    <td class=" . "text-right" . ">" . $dataRPp[$idx1][$idx2]['value'];
                                                                                             } else {
-                                                                                                echo number_format($data['value'], 0, ",", ".");
+                                                                                                echo "<td> Rp </td>
+                                                                    <td class=" . "text-right" . ">" . number_format($dataRPp[$idx1][$idx2]['value'], 0, ",", ".");
                                                                                             } ?></td>
 
-                                                                </tr><?php $totalPp += $data['value'];
+                                                                </tr><?php //$totalPp += $dataRPp[$idx1][$idx2]['value'];
+                                                                        $nama = false;
                                                                     }
                                                                 } ?>
 
 
                                                         <tr style="border-top: 1px solid  #90A4AE; font-weight: bold;">
-                                                            <td>Total Anggaran Pendidikan Politik</td>
-                                                            <td>:</td>
-                                                            <td> Rp </td>
-                                                            <td class="text-right"><?php echo number_format($totalPp, 0, ",", ".") ?></td>
+                                                            <?php $red = $ttlPP != $ttlRPP ? 'total-red' : '' ?>
+                                                            <td class="<?php echo $red; ?>">Total Anggaran Pendidikan Politik</td>
+
+                                                            <td class="<?php echo $red; ?>">:</td>
+                                                            <td class="<?php echo $red; ?>"> Rp </td>
+                                                            <td class="text-right <?php echo $red; ?>"><?php echo number_format($ttlPP, 0, ",", ".") ?></td>
+                                                            <td class="<?php echo $red; ?>"></td>
+                                                            <td class="<?php echo $red; ?>"></td>
+                                                            <td class="<?php echo $red; ?>"> Rp </td>
+                                                            <td class="text-right <?php echo $red; ?>"><?php echo number_format($ttlRPP, 0, ",", ".") ?></td>
                                                         </tr>
                                                     </table>
 

@@ -1,6 +1,6 @@
 <div class="row">
 
-    <form method="post" id="fm-prpsl" action="" enctype="multipart/form-data">
+    <form method="post" id="fm-rlss" action="" enctype="multipart/form-data">
 
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="sparkline10-list mg-tb-30">
@@ -10,10 +10,13 @@
                         <h1>Realisasi</h1>
                     </div>
                     <?php
-                    $qry = "SELECT COUNT(`pnpldt_id`) AS JML FROM `prpdt_pnpldt` WHERE `prpdt_id`= ?";
-                    $jml = $pdo->prepare($qry);
-                    $jml->excute($pId);
-                    $hasil = $jml->fetchAll()
+                    // $qry = "SELECT COUNT(`pnpldt_id`) AS JML FROM `prpdt_pnpldt` WHERE `prpdt_id`= :id";
+                    // $jml = $pdo->prepare($qry);
+                    // $jml->bindValue(":id", $pId, PDO::PARAM_STR);
+                    // $jml->execute();
+                    // $hasil = $jml->fetchAll();
+                    print("<pre>" . print_r($pId, true) . "</pre>");
+
                     ?>
                     <div class="panel-group adminpro-custon-design" id="accordion">
 
@@ -198,7 +201,6 @@
                                 </div>
                             </div>
                         </div>
-
                         <div class="panel panel-default">
                             <a data-toggle="collapse" data-parent="#accordion3" href="#collapse3">
                                 <div class="panel-heading accordion-head">

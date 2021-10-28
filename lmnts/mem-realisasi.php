@@ -35,6 +35,14 @@
                         </div>
 
                         <?php
+                        function flatten(array $array)
+                        {
+                            $return = array();
+                            array_walk_recursive($array, function ($a) use (&$return) {
+                                $return[] = $a;
+                            });
+                            return $return;
+                        }
                         if ($pData != "0") :
                             for ($i = 0; $i < $pCount; $i++) :
                                 $ppId = array();
@@ -53,16 +61,17 @@
                                 if ($osData->rowCount() < 1) {
                                     $osId = "0";
                                 } else {
+                                    $osId = array();
                                     $osId[] = $osData->fetchAll(PDO::FETCH_ASSOC); //data proposal = $pData
+                                    $osId = flatten($osId);
                                 }
 
                                 // fetch data item proposal Operasional Skretariat=> os items and their corresponding value
                                 $itmOsQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID AND kategori = 'p'";
                                 $itmData  = $pdo->prepare($itmOsQRY);
-                                $itmData->bindValue(":postID", $osId[$i][0]["opskdt_id"], PDO::PARAM_STR);
+                                $itmData->bindValue(":postID", $osId[0], PDO::PARAM_STR);
                                 $hasil = $itmData->execute();
                                 $dataos = $itmData->fetchAll(PDO::FETCH_ASSOC);
-                                // print("<pre>" . print_r($dataos, true) . "</pre>");
                                 if ($itmData->rowCount() > 0) {
                                     foreach ($dataos as $data) {
                                         $ttlOS += $data['value'];
@@ -233,7 +242,7 @@
                                         </div>
                                         <div class="col-lg-2 col-md-2 col-sm-0 col-xs-0 td pad-0-15">
                                             <div class="add-product">
-                                                <a href="./tambah-realisasi.php">Add Realisasi</a>
+                                                <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslOSPut" data-post="<?php echo $pId; ?>" class="ps-setting" onclick="osReaModal($(this))">Tambah Realisasi </button>
                                             </div>
                                         </div>
                                     </div>
@@ -336,7 +345,7 @@
                                                                 </td>
                                                                 <td class="text-right">
                                                                     <!-- Modal Edit OS -->
-                                                                    <span class="pull-right"><button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslOSPut" data-post="<?php echo $dataos[0]['opskdt_id']; ?>" title="Edit" class="pd-setting-ed" onclick="osModal($(this))"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button></span>
+                                                                    <span class="pull-right"><button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslOSPut" data-post="<?php echo $osId[0]; ?>" title="Edit" class="pd-setting-ed" onclick="osModal($(this))"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button></span>
                                                                 </td>
                                                             </tr>
                                                         </table>
@@ -402,10 +411,9 @@
                                                         ?>
 
                                                             <tr style="border-top: 1px solid #e9ecef;border-bottom: 1px solid  #90A4AE;">
-                                                                <td colspan="3" style="text-transform: capitalize; font-weight: bold;"><?php echo $datas[0]['value'];
-                                                                                                                                        print_r() ?></td>
-                                                                <td class="text-right">
-                                                                    <span style="display: flex;">
+                                                                <td colspan="3" style="text-transform: capitalize; font-weight: bold;"><?php echo $datas[0]['value']; ?></td>
+                                                                <td colspan="5" class="text-right">
+                                                                    <span style="display: flex-end;">
                                                                         <!-- Edit PP-->
                                                                         <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslPPPut" data-post="<?php echo $datas[0]['pnpldt_id']; ?>" data-ttl="put" title="Edit<?php echo $datas[0]['pnpldt_id']; ?>" class="pd-setting-ed" onclick="sModal($(this))"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
                                                                         <button tooltip-toggle="tooltip" data-toggle="modal" data-target="#prpslsDel" data-post="<?php echo $dataPp[0]['pnpldt_id']; ?>" data-ttl="del" title="Trash<?php echo $dataPp[0]['pnpldt_id']; ?>" class="pd-setting-ed" onclick="ppModal($(this))"><i class="fa fa-trash-o" aria-hidden="true"></i></button>

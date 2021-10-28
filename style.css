@@ -1932,6 +1932,11 @@ ul.tab-custon-design li.active a, ul.tab-review-design li.active a{
 /*----------------------------------------*/
 /*  37.  Basic Form css
 /*----------------------------------------*/
+.wrapper-modal {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+}
 .sparkline8-graph .basic-login-inner, .sparkline8-graph .login-social-inner, .sparkline9-graph .basic-login-form-ad, .sparkline11-graph .basic-login-form-ad{
 	text-align:left;
 }

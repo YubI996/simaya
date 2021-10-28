@@ -155,7 +155,7 @@ $(document).ready(function() {
                     'data'         : formData,
                 },
                 success: function(data){
-                  plPutNotif(data);
+                    plPutNotif(data);
                 }
             });
         }
@@ -198,6 +198,28 @@ $(document).ready(function() {
             });
         }
 
+        // Update proposal operasional sekretariatan function
+        osRPut = function () {
+            var form = this.document.forms;
+            
+            var formData = {};
+            $(form).find("input[name]").each(function (index, node) {
+                formData[node.name] = node.value;
+            });
+
+            $.ajax({
+                type: 'POST',
+                url: '../../assts/fctn/prpsl-fctn.php',
+                data: {
+                    'prpsl-rea-os-put' : 1,
+                    'data'         : formData,
+                },
+                success: function(data){
+                  plPutNotif(data);
+                }
+            });
+        }
+
         osModal = function(this_) {
             var pID = $(this_).data('post');
 
@@ -206,6 +228,23 @@ $(document).ready(function() {
                 url: '../../assts/fctn/prpsl-fctn.php',
                 data: {
                     'prpsl-os-modal' : 1,
+                    'data'           : pID,
+                },
+                success: function(data){
+                    $('#prpslOSPut').html(data);
+                }
+            });
+        }
+
+        //Modal u/ add realisasi 
+        osReaModal = function(this_) {
+            var pID = $(this_).data('post');
+
+            $.ajax({
+                type: 'POST',
+                url: '../../assts/fctn/prpsl-fctn.php',
+                data: {
+                    'rea-os-modal' : 1,
                     'data'           : pID,
                 },
                 success: function(data){

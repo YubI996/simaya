@@ -3,7 +3,7 @@
 include_once("./serv-conf.php");
 $root = BASE_URL;
 $state = STATE;
-// var_dump($_POST);
+var_dump($_POST);
 function fungsi_name($s)
 { //sanitasi dan penyeragaman case
 	$c = array(' ');
@@ -607,39 +607,69 @@ elseif (isset($_POST['prpsl-del'])) {
 		}
 	}
 } elseif (isset($_POST['prpsl-os-put'])) {
+
+
 	$user 		= $_SESSION["access-login"];
-	$osId 		= $_POST['data']['os_num'];
-	$osAtk 		= $_POST['data']['os_atk'];
-	$osFc 		= $_POST['data']['os_fc'];
-	$osSda		= $_POST['data']['os_sda'];
-	$osHonor	= $_POST['data']['os_hnr'];
-	$osModal 	= $_POST['data']['os_mdl'];
-	$osPerpel 	= $_POST['data']['os_perpel'];
-	$osPmprkpan	= $_POST['data']['os_pepan'];
-	$osPmprltan = $_POST['data']['os_petan'];
-	$osTransp 	= $_POST['data']['os_trns'];
-	$osLain 	= $_POST['data']['os_ln'];
-	$osSewa 	= $_POST['data']['os_sewa'];
+	$datas 		= $_POST['data']['datas'];
+	$osID 		= $_POST['data']['os_num'];
+	// print("<pre>" . print_r($_POST['data'], true) . "</pre>");
+
 
 	// begin transaction
 	$pdo->beginTransaction();
 	try {
-		$putQry 	= "UPDATE prpdt_opskdt SET `opskdt_atk`=:atk, `opskdt_fc`=:fc, `opskdt_ln`=:lain, `opskdt_sda`=:sda, `opskdt_hnr`=:hnr, `opskdt_sewa`=:swa, `opskdt_mdl`=:modal, `opskdt_prpl`=:perpel, `opskdt_pmkpn`=:pepan, `opskdt_pmltn`=:petan, `opskdt_trns`=:trans, `modified_by`=:user WHERE `opskdt_id`=:id";
+		$putQry 	= "UPDATE prpdt_opskdt SET `modified_by`=:user WHERE `opskdt_id`=:id";
 		$putOpskdt 	= $pdo->prepare($putQry);
-		$putOpskdt->bindValue(":atk", $osAtk, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":fc", $osFc, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":sda", $osSda, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":hnr", $osHonor, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":swa", $osSewa, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":modal", $osModal, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":perpel", $osPerpel, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":pepan", $osPmprkpan, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":petan", $osPmprltan, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":trans", $osTransp, PDO::PARAM_STR);
-		$putOpskdt->bindValue(":lain", $osLain, PDO::PARAM_STR);
 		$putOpskdt->bindValue(":user", $user, PDO::PARAM_STR);
 		$putOpskdt->bindValue(":id", $osId, PDO::PARAM_STR);
 		$putOpskdt->execute();
+
+
+		foreach ($datas as $idx => $val) {
+			$putitmQry 	= "UPDATE item_prop SET `value`=:val WHERE `id_item_prop`=:id";
+			$putitmOpskdt 	= $pdo->prepare($putitmQry);
+			$putitmOpskdt->bindValue(":val", $val, PDO::PARAM_STR);
+			$putitmOpskdt->bindValue(":id", $idx, PDO::PARAM_STR);
+			$putitmOpskdt->execute();
+		}
+
+		$pdo->commit();
+		echo "green";
+	} catch (PDOException $e) {
+		$pdo->rollback();
+		if ($state == 'devel') {
+			echo $e;
+		} elseif ($state == 'production') {
+			echo $e->getCode();
+		}
+	}
+} elseif (isset($_POST['prpsl-rea-os-put'])) {
+
+
+	$user 		= $_SESSION["access-login"];
+	$datas[] 		= $_POST['data']['datas'];
+	$osID 		= $_POST['data']['os_num'];
+	print("<pre>" . print_r($_POST['data']['os_num'], true) . "</pre>");
+
+
+	// begin transaction
+	$pdo->beginTransaction();
+	try {
+		$putQry 	= "INSERT INTO `prpdt_rea_opskdt` (`opskdt_id`, `sttus`, `created_by`, `modified_by`, `created_date`, `modified_date`) VALUES (:osId, 'publish', :user, :user, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+		$putOpskdt 	= $pdo->prepare($putQry);
+		$putOpskdt->bindValue(":osId", $osId, PDO::PARAM_STR);
+		$putOpskdt->bindValue(":user", $user, PDO::PARAM_STR);
+		$putOpskdt->execute();
+
+
+		foreach ($datas as $idx => $val) {
+			$putitmQry 	= "INSERT INTO item_prop (`id_item`, `kategori`, `id_op`, `id_pnp`, `value`) VALUES (:idItem, 'r', :osId, NULL, :item)";
+			$putitmOpskdt 	= $pdo->prepare($putitmQry);
+			$putitmOpskdt->bindValue(":idItem", $idx, PDO::PARAM_STR);
+			$putitmOpskdt->bindValue(":osId", $osId, PDO::PARAM_STR);
+			$putitmOpskdt->bindValue(":item", $val, PDO::PARAM_STR);
+			$putitmOpskdt->execute();
+		}
 
 		$pdo->commit();
 		echo "green";
@@ -1053,7 +1083,12 @@ elseif (isset($_POST['prpsl-del'])) {
 } elseif (isset($_POST['prpsl-os-modal'])) {
 	$id 	= $_POST['data'];
 
-	$osQRY 	= "SELECT * FROM prpdt_opskdt WHERE opskdt_id = :id LIMIT 1";
+	// $osQRY 	= "SELECT * FROM prpdt_opskdt WHERE opskdt_id = :id LIMIT 1";
+	$osQRY 	= "SELECT item_prop.id_item_prop as id, item_kegiatan.item, item_prop.value 
+	FROM item_prop 
+	INNER JOIN item_kegiatan 
+	ON item_prop.id_item=item_kegiatan.id_item 
+	WHERE item_prop.id_op = :id AND item_prop.kategori = 'p'";
 	$osData = $pdo->prepare($osQRY);
 	$osData->bindValue(":id", $id, PDO::PARAM_STR);
 	$osData->execute();
@@ -1061,7 +1096,8 @@ elseif (isset($_POST['prpsl-del'])) {
 	if ($osData->rowCount() < 1) {
 		echo "";
 	} else {
-		$osData = $osData->fetchAll(PDO::FETCH_ASSOC);
+		$osDatas = $osData->fetchAll(PDO::FETCH_ASSOC);
+
 
 		echo '
 		<div class="modal-dialog">
@@ -1071,60 +1107,83 @@ elseif (isset($_POST['prpsl-del'])) {
 				</div>
 				<div class="modal-body">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="basic-login-inner">
+					<div class="basic-login-inner wrapper-modal">
 						<form id="os-put-form">
-							<input type="hidden" class="form-control" value="' . $osData[0]['opskdt_id'] . '" name="os_num" />
+							<input type="hidden" class="form-control" value="' . $id . '" name="os_num" />
+							';
+		foreach ($osDatas as $osData) {
+			// print("<pre>" . print_r($osData, true) . "</pre>");
+
+			echo '
 							<div class="form-group-inner">
-								<label class="pull-left">ATK</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_atk'] . '" name="os_atk" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">Foto Copy</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_fc'] . '" name="os_fc" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">Honorarium</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_hnr'] . '" name="os_hnr" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">Belanja SDA / Tagihan</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_sda'] . '" name="os_sda" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">Belanja Modal / Pengadaan</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_mdl'] . '" name="os_mdl" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">Biaya Sewa</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_sewa'] . '" name="os_sewa" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">Belanja Peralatan dan Perlengkapan Kantor</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_prpl'] . '" name="os_perpel" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">Belanja Pemeliharaan Perlengkapan Kantor</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_pmkpn'] . '" name="os_pepan" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">Belanja Pemeliharaan Peralatan Kantor</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_pmltn'] . '" name="os_petan" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">BBM / Biaya Transportasi</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_trns'] . '" name="os_trns" onkeyup="maskCurrency()" />
-							</div>
-							<div class="form-group-inner">
-								<label class="pull-left">Lainnya</label>
-								<input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" value="' . $osData[0]['opskdt_ln'] . '" name="os_ln" onkeyup="maskCurrency()" />
-							</div>
+								<label class="pull-left">' . $osData['item'] . '</label>
+								<input type="text" class="form-control mask-currency" name="datas][' . $osData['id'] . ']" placeholder="Rp 0.000.000" value="' . $osData['value'] . '" onkeyup="maskCurrency()" />
+							</div>';
+		}
+		echo '
 						</form>
 					</div>
 					</div>
 				</div>
 				<div class="modal-footer">
 					<a data-dismiss="modal" href="#">Batalkan</a>
-					<a style="cursor: pointer;" id="osPut" data-target="#os-put-form" onClick="osPut()">Simpan</a>
+					<a style="cursor: pointer;" id="osPut" data-target="#os-put-form" onClick="osRPut()">Simpan</a>
+				</div>
+			</div>
+		</div>
+		<!-- input-mask JS
+		============================================ -->
+		<script src="../../assts/js/input-mask/jquery.maskMoney.js"></script>
+		<script src="../../assts/js/input-mask/maskCurrency.js"></script>
+	';
+	}
+} elseif (isset($_POST['rea-os-modal'])) {
+
+	$id 	= $_POST['data'];
+
+	// $osQRY 	= "SELECT * FROM prpdt_opskdt WHERE opskdt_id = :id LIMIT 1";
+	$itmQRY 	= "SELECT id_item as id, item FROM item_kegiatan WHERE NOT kategori_item = 'a'";
+	$itmData = $pdo->prepare($itmQRY);
+	$itmData->bindValue(":id", $id, PDO::PARAM_STR);
+	$itmData->execute();
+
+	if ($itmData->rowCount() < 1) {
+		// echo "green";
+		echo '<script> console.log(' . 'red' . ');</script>';
+	} else {
+		$itmDatas = $itmData->fetchAll(PDO::FETCH_ASSOC);
+		// print("<pre>" . print_r($itmDatas, true) . "</pre>");
+
+		// echo "<script> console.log('" . $itmDatas . "');</script>";
+
+		echo '
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header header-color-modal bg-color-5">
+					<h4 class="modal-title">Tambah Data Realisasi Operasional Sekretariatan</h4>
+				</div>
+				<div class="modal-body">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+					<div class="basic-login-inner">
+						<form id="os-put-form">
+							<input type="hidden" class="form-control" value="' . $id . '" name="os_num" />';
+		foreach ($itmDatas as $key => $val) {
+
+
+			echo '
+							<div class="form-group-inner">
+								<label class="pull-left">' . $val['item'] . '</label>
+								<input type="number" class="form-control mask-currency" name="datas][' . $val['id'] . ']" placeholder="Rp 0.000.000" 	 onkeyup="maskCurrency()" />
+							</div>';
+		}
+		echo '
+						</form>
+					</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<a data-dismiss="modal" href="#">Batalkan</a>
+					<a style="cursor: pointer;" id="osRPut" data-target="#os-put-form" onClick="osRPut()">Simpan</a>
 				</div>
 			</div>
 		</div>

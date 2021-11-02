@@ -3,7 +3,7 @@
 include_once("./serv-conf.php");
 $root = BASE_URL;
 $state = STATE;
-var_dump($_POST);
+// var_dump($_POST);
 function fungsi_name($s)
 { //sanitasi dan penyeragaman case
 	$c = array(' ');
@@ -648,8 +648,8 @@ elseif (isset($_POST['prpsl-del'])) {
 
 	$user 		= $_SESSION["access-login"];
 	$datas[] 		= $_POST['data']['datas'];
-	$osID 		= $_POST['data']['os_num'];
-	print("<pre>" . print_r($_POST['data']['os_num'], true) . "</pre>");
+	$osID 		= $_POST['data']['os_num']; //id proposal
+	// print("<pre>" . print_r($_POST['data']['os_num'], true) . "</pre>");
 
 
 	// begin transaction
@@ -657,16 +657,20 @@ elseif (isset($_POST['prpsl-del'])) {
 	try {
 		$putQry 	= "INSERT INTO `prpdt_rea_opskdt` (`opskdt_id`, `sttus`, `created_by`, `modified_by`, `created_date`, `modified_date`) VALUES (:osId, 'publish', :user, :user, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 		$putOpskdt 	= $pdo->prepare($putQry);
-		$putOpskdt->bindValue(":osId", $osId, PDO::PARAM_STR);
+		$putOpskdt->bindValue(":osId", $osID, PDO::PARAM_STR);
 		$putOpskdt->bindValue(":user", $user, PDO::PARAM_STR);
 		$putOpskdt->execute();
+		$idOS = $pdo->lastInsertId();
 
 
-		foreach ($datas as $idx => $val) {
-			$putitmQry 	= "INSERT INTO item_prop (`id_item`, `kategori`, `id_op`, `id_pnp`, `value`) VALUES (:idItem, 'r', :osId, NULL, :item)";
+
+		print("<pre>" . print_r($datas[0][2], true) . "</pre>");
+		foreach ($datas[0] as $idx => $val) {
+
+			$putitmQry 	= "INSERT INTO item_rea (`id_item`, `id_op`, `id_pnp`, `value`) VALUES (:idItem, :osId, NULL, :item)";
 			$putitmOpskdt 	= $pdo->prepare($putitmQry);
 			$putitmOpskdt->bindValue(":idItem", $idx, PDO::PARAM_STR);
-			$putitmOpskdt->bindValue(":osId", $osId, PDO::PARAM_STR);
+			$putitmOpskdt->bindValue(":osId", $idOS, PDO::PARAM_STR);
 			$putitmOpskdt->bindValue(":item", $val, PDO::PARAM_STR);
 			$putitmOpskdt->execute();
 		}
@@ -1141,22 +1145,28 @@ elseif (isset($_POST['prpsl-del'])) {
 
 	$id 	= $_POST['data'];
 
-	// $osQRY 	= "SELECT * FROM prpdt_opskdt WHERE opskdt_id = :id LIMIT 1";
-	$itmQRY 	= "SELECT id_item as id, item FROM item_kegiatan WHERE NOT kategori_item = 'a'";
-	$itmData = $pdo->prepare($itmQRY);
-	$itmData->bindValue(":id", $id, PDO::PARAM_STR);
-	$itmData->execute();
-
-	if ($itmData->rowCount() < 1) {
-		// echo "green";
-		echo '<script> console.log(' . 'red' . ');</script>';
+	$osQRY 	= "SELECT `opskdt_id` AS id FROM prpdt_opskdt WHERE prpdt_id = :id LIMIT 1";
+	$DataOs = $pdo->prepare($osQRY);
+	$DataOs->bindValue(":id", $id, PDO::PARAM_STR);
+	$DataOs->execute();
+	if ($DataOs->rowCount() < 1) {
+		echo ('Proposal tidak ditemukan');
 	} else {
-		$itmDatas = $itmData->fetchAll(PDO::FETCH_ASSOC);
-		// print("<pre>" . print_r($itmDatas, true) . "</pre>");
+		$idPOS = implode($DataOs->fetch(PDO::FETCH_ASSOC)); //AMBIL SATU NIALAINYA AJA
+		$itmQRY 	= "SELECT id_item as id, item FROM item_kegiatan WHERE NOT kategori_item = 'a'";
+		$itmData = $pdo->prepare($itmQRY);
+		$itmData->execute();
 
-		// echo "<script> console.log('" . $itmDatas . "');</script>";
+		if ($itmData->rowCount() < 1) {
+			// echo "green";
+			echo '<script> console.log(' . 'red' . ');</script>';
+		} else {
+			$itmDatas = $itmData->fetchAll(PDO::FETCH_ASSOC);
+			// print("<pre>" . print_r($itmDatas, true) . "</pre>");
 
-		echo '
+			// echo "<script> console.log('" . $itmDatas . "');</script>";
+
+			echo '
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header header-color-modal bg-color-5">
@@ -1166,17 +1176,17 @@ elseif (isset($_POST['prpsl-del'])) {
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="basic-login-inner">
 						<form id="os-put-form">
-							<input type="hidden" class="form-control" value="' . $id . '" name="os_num" />';
-		foreach ($itmDatas as $key => $val) {
+							<input type="hidden" class="form-control" value="' . $idPOS . '" name="os_num" />';
+			foreach ($itmDatas as $key => $val) {
 
 
-			echo '
+				echo '
 							<div class="form-group-inner">
 								<label class="pull-left">' . $val['item'] . '</label>
 								<input type="number" class="form-control mask-currency" name="datas][' . $val['id'] . ']" placeholder="Rp 0.000.000" 	 onkeyup="maskCurrency()" />
 							</div>';
-		}
-		echo '
+			}
+			echo '
 						</form>
 					</div>
 					</div>
@@ -1192,6 +1202,7 @@ elseif (isset($_POST['prpsl-del'])) {
 		<script src="../../assts/js/input-mask/jquery.maskMoney.js"></script>
 		<script src="../../assts/js/input-mask/maskCurrency.js"></script>
 	';
+		}
 	}
 } elseif (isset($_POST['prpsl-pp-put-modal'])) {
 	$id 	= $_POST['data'];

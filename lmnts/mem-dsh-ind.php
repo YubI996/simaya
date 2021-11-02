@@ -40,7 +40,7 @@
                                     <span class="text-center" style="font-weight: bold;">Setting</span>
                                 </div>
                             </div>
-                        </div>
+                        </div><!-- proper end -->
 
                         <?php
                         if ($pData != "0") : //All proposal

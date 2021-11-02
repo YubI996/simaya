@@ -215,7 +215,7 @@ $(document).ready(function() {
                     'data'         : formData,
                 },
                 success: function(data){
-                  plPutNotif(data);
+                    $('#prpslOSPut').html(data);
                 }
             });
         }

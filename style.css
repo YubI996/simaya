@@ -138,6 +138,9 @@ body {}
 .sidebar-header {
     text-align: center;
 }
+.font-auto{
+    font-size: 0.74rem;
+}
 .sidebar-header h3 {
     font-size: 20px;
     color: #fff;

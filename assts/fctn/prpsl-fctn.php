@@ -1153,9 +1153,11 @@ elseif (isset($_POST['prpsl-del'])) {
 		echo ('Proposal tidak ditemukan');
 	} else {
 		$idPOS = implode($DataOs->fetch(PDO::FETCH_ASSOC)); //AMBIL SATU NIALAINYA AJA
-		$itmQRY 	= "SELECT id_item as id, item FROM item_kegiatan WHERE NOT kategori_item = 'a'";
-		$itmData = $pdo->prepare($itmQRY);
-		$itmData->execute();
+		$itmOsQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID";
+		$itmData  = $pdo->prepare($itmOsQRY);
+		$itmData->bindValue(":postID", $idPOS, PDO::PARAM_STR);
+		$hasil = $itmData->execute();
+		$dataos = $itmData->fetchAll(PDO::FETCH_ASSOC);
 
 		if ($itmData->rowCount() < 1) {
 			// echo "green";
@@ -1163,8 +1165,9 @@ elseif (isset($_POST['prpsl-del'])) {
 		} else {
 			$itmDatas = $itmData->fetchAll(PDO::FETCH_ASSOC);
 			// print("<pre>" . print_r($itmDatas, true) . "</pre>");
+			// $datason = json_encode($itmDatas);
 
-			// echo "<script> console.log('" . $itmDatas . "');</script>";
+			// echo "<script> console.log('" . $datason . "');</script>";
 
 			echo '
 		<div class="modal-dialog">
@@ -1176,17 +1179,207 @@ elseif (isset($_POST['prpsl-del'])) {
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 					<div class="basic-login-inner">
 						<form id="os-put-form">
-							<input type="hidden" class="form-control" value="' . $idPOS . '" name="os_num" />';
-			foreach ($itmDatas as $key => $val) {
+						<div class="panel-group adminpro-custon-design" id="accordion">
+						<input type="hidden" class="form-control" value="' . $idPOS . '" name="os_num" />
+                        <div class="panel panel-default">
+                            <a data-toggle="collapse" data-parent="#accordion4" href="#collapse1">
+                                <div class="panel-heading accordion-head">
+                                    <h4 class="panel-title">Pendidikan Politik</h4>
+                                </div>
+                            </a>
 
+                            <!-- pendidikan politik collapse content -->
+                            <div id="collapse1" class="panel-collapse panel-ic collapse">
+                                <!-- pendidikan politik collapse content wrapper -->
+                                <div class="panel-body admin-panel-content">
+                                    <!-- file-repeater class -->
+                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 file-repeater" style="padding: 0;">
+                                        <div class="button-drop-style-one btn-danger-bg pull-right">
+                                            <button type="button" data-repeater-create class="btn btn-custon-four btn-danger danger-btn-cl">
+                                                <i class="fa fa-plus adminpro-warning-danger" aria-hidden="true"></i> Tambah Kegiatan
+                                            </button>
+                                        </div>
 
-				echo '
-							<div class="form-group-inner">
-								<label class="pull-left">' . $val['item'] . '</label>
-								<input type="number" class="form-control mask-currency" name="datas][' . $val['id'] . ']" placeholder="Rp 0.000.000" 	 onkeyup="maskCurrency()" />
-							</div>';
-			}
+                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " style="padding: 0;">
+                                            <!-- form repeater start -->
+                                            <div data-repeater-list="kgD4tforLo0P">
+                                                <div data-repeater-item>
+                                                    <!-- form wrapper start -->
+                                                    <div class="sparkline10-list" style="margin-top: 10px;">';
+			$fileQRY   = "SELECT id_item, item FROM item_kegiatan WHERE kategori_item = 'a'";
+			$fileData  = $pdo->prepare($fileQRY);
+			$fileData->execute();
+
+			if ($fileData->rowCount() > 0) :
+				$fileDtCount  = $fileData->rowCount();
+				$fileAllDt    = $fileData->fetchAll(PDO::FETCH_ASSOC);
+
+				for ($i = 0; $i < $fileDtCount; $i++) : $ind = $i + 1;
+					echo '
+                                <div class="form-group-inner">
+                                    <div class="row">
+                                        <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                            <label class="login2 pull-left pull-left-pro">' .
+						$fileAllDt[$i]['item'] .
+						'</label>
+                                        </div>
+                                        <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                            <div class="input-mark-inner mg-b-22">
+                                                <input type="';
+					if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+						echo 'number';
+					} else {
+						echo 'text';
+					}
+
+					echo '" class="form-control ';
+					if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+						echo 'mask-currency';
+					}
+
+					echo '" placeholder="';
+					if ($fileAllDt[$i]['item'] == 'Nama Kegiatan') {
+						echo 'Nama Kegiatan';
+					} else {
+						echo 'Rp 0.000.000';
+					}
+
+					echo '" value="';
+					if ($fileAllDt[$i]['item'] == 'Nama Kegiatan') {
+						echo 'Nama Kegiatan';
+					} else {
+						echo 'Rp 0.000.000';
+					}
+
+					echo '" name="' . $fileAllDt[$i]['id_item'] . $fileAllDt[$i]['item'] . '"';
+					if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+						echo 'onkeyup="maskCurrency()"';
+					}
+					echo '/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>';
+				endfor;
+			endif;
 			echo '
+                    </div><!-- form wrapper end -->
+
+                </div>
+            </div><!-- form repeater end -->
+        </div>
+</div><!-- file-repeater class end -->
+</div><!-- pendidikan politik collapse content wrapper end -->
+
+</div><!-- pendidikan politik collapse content end -->
+</div>
+                        <div class="panel panel-default">
+                            <a data-toggle="collapse" data-parent="#accordion2" href="#collapse2">
+                                <div class="panel-heading accordion-head">
+                                    <h4 class="panel-title">Operasional Sekretariatan</h4>
+                                </div>
+                            </a>
+                            <div id="collapse2" class="panel-collapse panel-ic collapse">
+                                <div class="panel-body admin-panel-content">';
+			$QRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID";
+			$Data  = $pdo->prepare($QRY);
+			$Data->bindValue(":postID", $idPOS, PDO::PARAM_STR);
+			$Data->execute();
+
+			if ($Data->rowCount() > 0) :
+				$DtCount  = $Data->rowCount();
+				$AllDt    = $Data->fetchAll(PDO::FETCH_ASSOC);
+				foreach ($AllDt as $key => $item) {
+					$arr[$item['kategori_item']][$key] = $item;
+				}
+
+				ksort($arr, SORT_NUMERIC);
+				for ($i = 0; $i < $DtCount; $i++);
+				foreach ($arr as $key => $val) {
+					switch ($key) {
+						case 1:
+							$judul = "ADMINISTRASI UMUM";
+							break;
+
+						case 2:
+							$judul = "BERLANGGANAN DAYA DAN JASA";
+							break;
+
+						case 3:
+							$judul = "PEMELIHARAAN DATA DAN ARSIP";
+							break;
+
+						case 4:
+							$judul = "PEMELIHARAAN PERALATAN KANTOR";
+							break;
+
+						default:
+							$judul = "Tidak terdefinisi";
+							break;
+					}
+					echo '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <label class="login2 pull-left">' . $key . ". " . $judul . '</label>
+                                </div>';
+					// var_dump("key : " . $key . ":");
+					foreach ($val as $key2 => $datas) {
+						// var_dump("data : " . $datas["item"]);
+
+						echo '
+                                    <div class="form-group-inner">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                                <label class="login2 pull-left pull-left-pro">' . $datas["item"] . '</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="input-mark-inner mg-b-22">
+                                    <input type="number';
+
+						echo '" class="form-control mask-currency" placeholder="';
+						if ($datas["item"] == 'Nama Kegiatan') {
+							echo 'Nama Kegiatan';
+						} else {
+							echo 'Rp 0.000.000';
+						}
+						echo '" name="' . $datas["id_item"] . $datas["item"] . '"';
+						if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
+							echo 'onkeyup="maskCurrency()"';
+						}
+						echo ' />
+                    </div>
+                </div>
+            </div>
+        </div>';
+					}
+				}
+			endif;
+			echo '
+
+</div>
+</div>
+</div>
+                        
+                        <div class="panel panel-default">
+                            <a data-toggle="collapse" data-parent="#accordion3" href="#collapse3">
+                                <div class="panel-heading accordion-head">
+                                    <h4 class="panel-title">Total RAB</h4>
+                                </div>
+                            </a>
+                            <div id="collapse3" class="panel-collapse panel-ic collapse in">
+                                <div class="panel-body admin-panel-content">
+                                    <div class="form-group-inner">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                                <label class="login2 pull-right pull-right-pro">Total</label>
+                                            </div>
+                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                                <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" name="ttl_rab" onkeyup="maskCurrency()" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+						</div.
 						</form>
 					</div>
 					</div>

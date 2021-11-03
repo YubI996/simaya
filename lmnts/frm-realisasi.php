@@ -1,6 +1,6 @@
 <div class="row">
 
-    <forxm method="post" id="fm-rlss" action="" enctype="multipart/form-data">
+    <form method="post" id="fm-rlss" action="" enctype="multipart/form-data">
 
         <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
             <div class="sparkline10-list mg-tb-30">
@@ -19,7 +19,6 @@
 
                     ?>
                     <div class="panel-group adminpro-custon-design" id="accordion">
-                        <!-- start -->
                         <?php echo '
                         <div class="panel panel-default">
                             <a data-toggle="collapse" data-parent="#accordion4" href="#collapse1">
@@ -67,14 +66,14 @@
                                             <div class="input-mark-inner mg-b-22">
                                                 <input type="';
                                 if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
-                                    echo 'number"';
+                                    echo 'number';
                                 } else {
                                     echo 'text';
                                 }
 
-                                echo '" class="form-control'; ?>
-                        <?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
-                                    echo 'mask-currency"';
+                                echo '" class="form-control ';
+                                if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+                                    echo 'mask-currency';
                                 }
 
                                 echo '" placeholder="';
@@ -105,8 +104,7 @@
 </div><!-- pendidikan politik collapse content wrapper end -->
 
 </div><!-- pendidikan politik collapse content end -->
-</div>'; ?>
-                        <!-- end -->
+</div>
                         <div class="panel panel-default">
                             <a data-toggle="collapse" data-parent="#accordion2" href="#collapse2">
                                 <div class="panel-heading accordion-head">
@@ -114,89 +112,83 @@
                                 </div>
                             </a>
                             <div id="collapse2" class="panel-collapse panel-ic collapse">
-                                <div class="panel-body admin-panel-content">
+                                <div class="panel-body admin-panel-content">';
+                        $QRY   = "SELECT id_item,kategori_item, item FROM item_kegiatan WHERE NOT kategori_item = 'a'";
+                        $Data  = $pdo->prepare($QRY);
+                        $Data->execute();
 
+                        if ($Data->rowCount() > 0) :
+                            $DtCount  = $Data->rowCount();
+                            $AllDt    = $Data->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($AllDt as $key => $item) {
+                                $arr[$item['kategori_item']][$key] = $item;
+                            }
 
+                            ksort($arr, SORT_NUMERIC);
+                            for ($i = 0; $i < $DtCount; $i++);
+                            foreach ($arr as $key => $val) {
+                                switch ($key) {
+                                    case 1:
+                                        $judul = "ADMINISTRASI UMUM";
+                                        break;
 
-                                    <?php
-                                    $QRY   = "SELECT id_item,kategori_item, item FROM item_kegiatan WHERE NOT kategori_item = 'a'";
-                                    $Data  = $pdo->prepare($QRY);
-                                    $Data->execute();
+                                    case 2:
+                                        $judul = "BERLANGGANAN DAYA DAN JASA";
+                                        break;
 
-                                    if ($Data->rowCount() > 0) :
-                                        $DtCount  = $Data->rowCount();
-                                        $AllDt    = $Data->fetchAll(PDO::FETCH_ASSOC);
-                                        foreach ($AllDt as $key => $item) {
-                                            $arr[$item['kategori_item']][$key] = $item;
-                                        }
+                                    case 3:
+                                        $judul = "PEMELIHARAAN DATA DAN ARSIP";
+                                        break;
 
-                                        ksort($arr, SORT_NUMERIC);
-                                        for ($i = 0; $i < $DtCount; $i++);
-                                        foreach ($arr as $key => $val) {
-                                            switch ($key) {
-                                                case 1:
-                                                    $judul = "ADMINISTRASI UMUM";
-                                                    break;
+                                    case 4:
+                                        $judul = "PEMELIHARAAN PERALATAN KANTOR";
+                                        break;
 
-                                                case 2:
-                                                    $judul = "BERLANGGANAN DAYA DAN JASA";
-                                                    break;
+                                    default:
+                                        $judul = "Tidak terdefinisi";
+                                        break;
+                                }
+                                echo '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                                    <label class="login2 pull-left">' . $key . ". " . $judul . '</label>
+                                </div>';
+                                // var_dump("key : " . $key . ":");
+                                foreach ($val as $key2 => $datas) {
+                                    // var_dump("data : " . $datas["item"]);
 
-                                                case 3:
-                                                    $judul = "PEMELIHARAAN DATA DAN ARSIP";
-                                                    break;
-
-                                                case 4:
-                                                    $judul = "PEMELIHARAAN PERALATAN KANTOR";
-                                                    break;
-
-                                                default:
-                                                    $judul = "Tidak terdefinisi";
-                                                    break;
-                                            }
-                                    ?>
-                                            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-left"> <?php echo $key . ". " . $judul; ?></label>
+                                    echo '
+                                    <div class="form-group-inner">
+                                        <div class="row">
+                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
+                                                <label class="login2 pull-left pull-left-pro">' . $datas["item"] . '</label>
                                             </div>
-                                            <?php
-                                            // var_dump("key : " . $key . ":");
-                                            foreach ($val as $key2 => $datas) {
-                                                // var_dump("data : " . $datas["item"]);
+                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
+                                                <div class="input-mark-inner mg-b-22">
+                                    <input type="number';
 
-                                            ?>
-                                                <div class="form-group-inner">
-                                                    <div class="row">
-                                                        <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                            <label class="login2 pull-left pull-left-pro"><?php echo $datas["item"]; ?></label>
-                                                        </div>
-                                                        <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                                                            <div class="input-mark-inner mg-b-22">
-                                                                <input type="<?php if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
-                                                                                    echo 'number"';
-                                                                                } else {
-                                                                                    echo 'text';
-                                                                                }
-                                                                                ?>" class="form-control mask-currency" placeholder="<?php if ($datas["item"] == 'Nama Kegiatan') {
-                                                                                                                                        echo 'Nama Kegiatan';
-                                                                                                                                    } else {
-                                                                                                                                        echo 'Rp 0.000.000';
-                                                                                                                                    }
-                                                                                                                                    ?>" name="<?php echo $datas["id_item"] . $datas["item"]; ?>" <?php if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
-                                                                                                                                                                                                        echo 'onkeyup="maskCurrency()"';
-                                                                                                                                                                                                    }
-                                                                                                                                                                                                    ?> />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                    echo '" class="form-control mask-currency" placeholder="';
+                                    if ($datas["item"] == 'Nama Kegiatan') {
+                                        echo 'Nama Kegiatan';
+                                    } else {
+                                        echo 'Rp 0.000.000';
+                                    }
+                                    echo '" name="' . $datas["id_item"] . $datas["item"] . '"';
+                                    if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
+                                        echo 'onkeyup="maskCurrency()"';
+                                    }
+                                    echo ' />
+                    </div>
+                </div>
+            </div>
+        </div>';
+                                }
+                            }
+                        endif;
+                        echo '
 
-                                    <?php }
-                                        }
-                                    endif; ?>
-
-                                </div>
-                            </div>
-                        </div>
+</div>
+</div>
+</div>
+                        
                         <div class="panel panel-default">
                             <a data-toggle="collapse" data-parent="#accordion3" href="#collapse3">
                                 <div class="panel-heading accordion-head">
@@ -217,35 +209,36 @@
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </div>'; ?>
+                        <!-- end -->
 
                     </div>
                 </div>
             </div>
         </div>
 
-        </form>
+    </form>
 
-        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
 
-        </div>
+    </div>
 
-        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-            <div class="form-group-inner">
-                <div class="login-btn-inner">
-                    <div class="row">
-                        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5"></div>
-                        <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
-                            <div class="login-horizental cancel-wp pull-left">
-                                <button class="btn btn-white" type="submit" onclick="cancelPrpsl($(this))">Cancel</button>
-                                <button class="btn btn-sm btn-primary login-submit-cs" type="submit" id="fm-prpsl" name="prpsl-add" value="save" onclick="addPrpsl($(this))">Save Change</button>
-                                <!-- <button class="btn btn-sm btn-primary login-submit-cs" type="submit" id="fm-prpsl" name="prpsl-add" value="save" onclick="console.log($(this))">Save Change</button> -->
-                            </div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+        <div class="form-group-inner">
+            <div class="login-btn-inner">
+                <div class="row">
+                    <div class="col-lg-5 col-md-5 col-sm-5 col-xs-5"></div>
+                    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                        <div class="login-horizental cancel-wp pull-left">
+                            <button class="btn btn-white" type="submit" onclick="cancelPrpsl($(this))">Cancel</button>
+                            <button class="btn btn-sm btn-primary login-submit-cs" type="submit" id="fm-prpsl" name="prpsl-add" value="save" onclick="addPrpsl($(this))">Save Change</button>
+                            <!-- <button class="btn btn-sm btn-primary login-submit-cs" type="submit" id="fm-prpsl" name="prpsl-add" value="save" onclick="console.log($(this))">Save Change</button> -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+    </div>
 
 </div>
 

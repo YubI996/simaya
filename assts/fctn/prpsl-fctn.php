@@ -1144,115 +1144,123 @@ elseif (isset($_POST['prpsl-del'])) {
 } elseif (isset($_POST['rea-os-modal'])) {
 
 	$id 	= $_POST['data'];
-
-	$osQRY 	= "SELECT `opskdt_id` AS id FROM prpdt_opskdt WHERE prpdt_id = :id LIMIT 1";
+	$osQRY 	= "SELECT `opskdt_id` AS os FROM `prpdt_opskdt` WHERE `prpdt_id` = :id";
 	$DataOs = $pdo->prepare($osQRY);
 	$DataOs->bindValue(":id", $id, PDO::PARAM_STR);
 	$DataOs->execute();
-	if ($DataOs->rowCount() < 1) {
+	$idPOS = implode($DataOs->fetch(PDO::FETCH_ASSOC)); //AMBIL SATU NILAINYA AJA
+
+	$ItmosQRY 	= "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :id";
+	$DataItmOs = $pdo->prepare($ItmosQRY);
+	$DataItmOs->bindValue(":id", $idPOS, PDO::PARAM_STR);
+	$DataItmOs->execute();
+	$itmOs = $DataItmOs->fetchAll(PDO::FETCH_ASSOC);
+	$ItmOs = call_user_func_array('array_merge', $itmOs);
+
+
+	$PpQRY 	= "SELECT pnpldt_id  FROM prpdt_pnpldt WHERE prpdt_id = :id";
+	$DataPp = $pdo->prepare($PpQRY);
+	$DataPp->bindValue(":id", $id, PDO::PARAM_STR);
+	$DataPp->execute();
+	$idPPP = ($DataPp->fetchAll(PDO::FETCH_ASSOC));
+	// $ph = str_repeat('?, ',  count($idPPP) - 1) . '?';
+	// print_r($idPPP);
+	foreach ($idPPP as $id) {
+		$ItmPpQRY 	= "SELECT item_prop.id_item,item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :id";
+		$DataItmPp = $pdo->prepare($ItmPpQRY);
+		$DataItmPp->bindValue(":id", $id['pnpldt_id'], PDO::PARAM_STR);
+		$DataItmPp->execute();
+		$itmPp[] = $DataItmPp->fetchAll(PDO::FETCH_ASSOC);
+	}
+	// print_r($itmPp);
+	$pnp = $DataPp->rowCount();
+	if ($DataOs->rowCount() < 1 && $DataPp->rowCount() < 1) {
 		echo ('Proposal tidak ditemukan');
 	} else {
-		$idPOS = implode($DataOs->fetch(PDO::FETCH_ASSOC)); //AMBIL SATU NIALAINYA AJA
-		$itmOsQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID";
-		$itmData  = $pdo->prepare($itmOsQRY);
-		$itmData->bindValue(":postID", $idPOS, PDO::PARAM_STR);
-		$hasil = $itmData->execute();
-		$dataos = $itmData->fetchAll(PDO::FETCH_ASSOC);
 
-		if ($itmData->rowCount() < 1) {
-			// echo "green";
-			echo '<script> console.log(' . 'red' . ');</script>';
-		} else {
-			$itmDatas = $itmData->fetchAll(PDO::FETCH_ASSOC);
-			// print("<pre>" . print_r($itmDatas, true) . "</pre>");
-			// $datason = json_encode($itmDatas);
 
-			// echo "<script> console.log('" . $datason . "');</script>";
+		// print("<pre>" . print_r($itmDatas, true) . "</pre>");
+		// $datason = json_encode($itmDatas);
 
-			echo '
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header header-color-modal bg-color-5">
-					<h4 class="modal-title">Tambah Data Realisasi Operasional Sekretariatan</h4>
-				</div>
-				<div class="modal-body">
-					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-					<div class="basic-login-inner">
-						<form id="os-put-form">
-						<div class="panel-group adminpro-custon-design" id="accordion">
-						<input type="hidden" class="form-control" value="' . $idPOS . '" name="os_num" />
-                        <div class="panel panel-default">
-                            <a data-toggle="collapse" data-parent="#accordion4" href="#collapse1">
-                                <div class="panel-heading accordion-head">
-                                    <h4 class="panel-title">Pendidikan Politik</h4>
-                                </div>
-                            </a>
+		// echo "<script> console.log('" . $datason . "');</script>";
 
-                            <!-- pendidikan politik collapse content -->
-                            <div id="collapse1" class="panel-collapse panel-ic collapse">
-                                <!-- pendidikan politik collapse content wrapper -->
-                                <div class="panel-body admin-panel-content">
-                                    <!-- file-repeater class -->
-                                    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 file-repeater" style="padding: 0;">
-                                        <div class="button-drop-style-one btn-danger-bg pull-right">
-                                            <button type="button" data-repeater-create class="btn btn-custon-four btn-danger danger-btn-cl">
-                                                <i class="fa fa-plus adminpro-warning-danger" aria-hidden="true"></i> Tambah Kegiatan
-                                            </button>
-                                        </div>
+		echo '
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header header-color-modal bg-color-5">
+							<h4 class="modal-title">Tambah Data Realisasi Operasional Sekretariatan</h4>
+						</div>
+						<div class="modal-body">
+		<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+							<div class="basic-login-inner">
+								<form id="os-put-form">
+								<div class="panel-group adminpro-custon-design" id="accordion">
+								<input type="hidden" class="form-control" value="' . $idPOS .
+			'" name="os_num" />
+								<div class="panel panel-default">
+									<a data-toggle="collapse" data-parent="#accordion4" href="#collapse1">
+										<div class="panel-heading accordion-head">
+											<h4 class="panel-title">Pendidikan Politik</h4>
+										</div>
+									</a>
 
-                                        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " style="padding: 0;">
-                                            <!-- form repeater start -->
-                                            <div data-repeater-list="kgD4tforLo0P">
-                                                <div data-repeater-item>
-                                                    <!-- form wrapper start -->
-                                                    <div class="sparkline10-list" style="margin-top: 10px;">';
-			$fileQRY   = "SELECT id_item, item FROM item_kegiatan WHERE kategori_item = 'a'";
-			$fileData  = $pdo->prepare($fileQRY);
-			$fileData->execute();
+						<!-- pendidikan politik collapse content -->
+						<div id="collapse1" class="panel-collapse panel-ic collapse">
+							<!-- pendidikan politik collapse content wrapper -->
+							<div class="panel-body admin-panel-content">
+								<!-- file-repeater class -->
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 file-repeater" style="padding: 0;">';
 
-			if ($fileData->rowCount() > 0) :
-				$fileDtCount  = $fileData->rowCount();
-				$fileAllDt    = $fileData->fetchAll(PDO::FETCH_ASSOC);
+		echo '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " style="padding: 0;">
+							';
+		// $fileQRY   = "SELECT id_item, item FROM item_kegiatan WHERE kategori_item = 'a'";
+		// $fileData  = $pdo->prepare($fileQRY);
+		// $fileData->execute();
 
-				for ($i = 0; $i < $fileDtCount; $i++) : $ind = $i + 1;
+		if ($pnp > 0) :
+			// $fileAllDt    = $fileData->fetchAll(PDO::FETCH_ASSOC);
+
+			foreach ($itmPp as $datas) {
+				echo '<!-- form repeater start -->
+							<div data-repeater-list="kgD4tforLo0P">
+								<div data-repeater-item>
+									<!-- form wrapper start -->
+									<div class="sparkline10-list" style="margin-top: 10px;">';
+				foreach ($datas as $data) {
 					echo '
                                 <div class="form-group-inner">
                                     <div class="row">
                                         <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
                                             <label class="login2 pull-left pull-left-pro">' .
-						$fileAllDt[$i]['item'] .
+						$data['item'] .
 						'</label>
                                         </div>
                                         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                                             <div class="input-mark-inner mg-b-22">
                                                 <input type="';
-					if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+					if ($data['item'] != 'Nama Kegiatan') {
 						echo 'number';
 					} else {
 						echo 'text';
 					}
 
 					echo '" class="form-control ';
-					if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+					if ($data['item'] != 'Nama Kegiatan') {
 						echo 'mask-currency';
 					}
 
 					echo '" placeholder="';
-					if ($fileAllDt[$i]['item'] == 'Nama Kegiatan') {
+					if ($data['item'] == 'Nama Kegiatan') {
 						echo 'Nama Kegiatan';
 					} else {
 						echo 'Rp 0.000.000';
 					}
 
-					echo '" value="';
-					if ($fileAllDt[$i]['item'] == 'Nama Kegiatan') {
-						echo 'Nama Kegiatan';
-					} else {
-						echo 'Rp 0.000.000';
-					}
+					echo '" value="' . $data['value'];
 
-					echo '" name="' . $fileAllDt[$i]['id_item'] . $fileAllDt[$i]['item'] . '"';
-					if ($fileAllDt[$i]['item'] != 'Nama Kegiatan') {
+
+					echo '" name="' . $data['id_item'] . $data['item'] . '"';
+					if ($data['item'] != 'Nama Kegiatan') {
 						echo 'onkeyup="maskCurrency()"';
 					}
 					echo '/>
@@ -1260,13 +1268,15 @@ elseif (isset($_POST['prpsl-del'])) {
                                         </div>
                                     </div>
                                 </div>';
-				endfor;
-			endif;
-			echo '
-                    </div><!-- form wrapper end -->
+				}
+				echo '</div><!-- form wrapper end -->
 
                 </div>
-            </div><!-- form repeater end -->
+            </div><!-- form repeater end -->';
+			};
+		endif;
+		echo '
+                    
         </div>
 </div><!-- file-repeater class end -->
 </div><!-- pendidikan politik collapse content wrapper end -->
@@ -1281,50 +1291,50 @@ elseif (isset($_POST['prpsl-del'])) {
                             </a>
                             <div id="collapse2" class="panel-collapse panel-ic collapse">
                                 <div class="panel-body admin-panel-content">';
-			$QRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID";
-			$Data  = $pdo->prepare($QRY);
-			$Data->bindValue(":postID", $idPOS, PDO::PARAM_STR);
-			$Data->execute();
+		$QRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID";
+		$Data  = $pdo->prepare($QRY);
+		$Data->bindValue(":postID", $idPOS, PDO::PARAM_STR);
+		$Data->execute();
 
-			if ($Data->rowCount() > 0) :
-				$DtCount  = $Data->rowCount();
-				$AllDt    = $Data->fetchAll(PDO::FETCH_ASSOC);
-				foreach ($AllDt as $key => $item) {
-					$arr[$item['kategori_item']][$key] = $item;
+		if ($Data->rowCount() > 0) :
+			$DtCount  = $Data->rowCount();
+			$AllDt    = $Data->fetchAll(PDO::FETCH_ASSOC);
+			foreach ($AllDt as $key => $item) {
+				$arr[$item['kategori_item']][$key] = $item;
+			}
+
+			ksort($arr, SORT_NUMERIC);
+			for ($i = 0; $i < $DtCount; $i++);
+			foreach ($arr as $key => $val) {
+				switch ($key) {
+					case 1:
+						$judul = "ADMINISTRASI UMUM";
+						break;
+
+					case 2:
+						$judul = "BERLANGGANAN DAYA DAN JASA";
+						break;
+
+					case 3:
+						$judul = "PEMELIHARAAN DATA DAN ARSIP";
+						break;
+
+					case 4:
+						$judul = "PEMELIHARAAN PERALATAN KANTOR";
+						break;
+
+					default:
+						$judul = "Tidak terdefinisi";
+						break;
 				}
-
-				ksort($arr, SORT_NUMERIC);
-				for ($i = 0; $i < $DtCount; $i++);
-				foreach ($arr as $key => $val) {
-					switch ($key) {
-						case 1:
-							$judul = "ADMINISTRASI UMUM";
-							break;
-
-						case 2:
-							$judul = "BERLANGGANAN DAYA DAN JASA";
-							break;
-
-						case 3:
-							$judul = "PEMELIHARAAN DATA DAN ARSIP";
-							break;
-
-						case 4:
-							$judul = "PEMELIHARAAN PERALATAN KANTOR";
-							break;
-
-						default:
-							$judul = "Tidak terdefinisi";
-							break;
-					}
-					echo '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+				echo '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                                     <label class="login2 pull-left">' . $key . ". " . $judul . '</label>
                                 </div>';
-					// var_dump("key : " . $key . ":");
-					foreach ($val as $key2 => $datas) {
-						// var_dump("data : " . $datas["item"]);
+				// var_dump("key : " . $key . ":");
+				foreach ($val as $key2 => $datas) {
+					// var_dump("data : " . $datas["item"]);
 
-						echo '
+					echo '
                                     <div class="form-group-inner">
                                         <div class="row">
                                             <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
@@ -1334,25 +1344,25 @@ elseif (isset($_POST['prpsl-del'])) {
                                                 <div class="input-mark-inner mg-b-22">
                                     <input type="number';
 
-						echo '" class="form-control mask-currency" placeholder="';
-						if ($datas["item"] == 'Nama Kegiatan') {
-							echo 'Nama Kegiatan';
-						} else {
-							echo 'Rp 0.000.000';
-						}
-						echo '" name="' . $datas["id_item"] . $datas["item"] . '"';
-						if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
-							echo 'onkeyup="maskCurrency()"';
-						}
-						echo ' />
+					echo '" class="form-control mask-currency" placeholder="';
+					if ($datas["item"] == 'Nama Kegiatan') {
+						echo 'Nama Kegiatan';
+					} else {
+						echo 'Rp 0.000.000';
+					}
+					echo '" name="' . $datas["id_item"] . $datas["item"] . '"';
+					if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
+						echo 'onkeyup="maskCurrency()"';
+					}
+					echo ' />
                     </div>
                 </div>
             </div>
         </div>';
-					}
 				}
-			endif;
-			echo '
+			}
+		endif;
+		echo '
 
 </div>
 </div>
@@ -1395,7 +1405,6 @@ elseif (isset($_POST['prpsl-del'])) {
 		<script src="../../assts/js/input-mask/jquery.maskMoney.js"></script>
 		<script src="../../assts/js/input-mask/maskCurrency.js"></script>
 	';
-		}
 	}
 } elseif (isset($_POST['prpsl-pp-put-modal'])) {
 	$id 	= $_POST['data'];

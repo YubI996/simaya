@@ -14,7 +14,7 @@
     right: -22px;
 }
 .modal-dialog {
-    margin: 50px auto;
+    margin: 2rem auto;
 }
 .modal-close-area .close{
 	opacity:1;
@@ -24,7 +24,7 @@
     font-size: 16px;
     background: #03a9f4;
     height: 30px;
-    width: 30px;
+    width: 100%;
     text-align: center;
     line-height: 28px;
     display: block;

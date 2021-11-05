@@ -811,6 +811,7 @@ ul.setting-panel-list li{
     transition: border-color 0.15s ease-in-out 0s, box-shadow 0.15s ease-in-out 0s;
     width: 100%;
 }
+
 .breadcome-heading a {
     position: absolute;
     top: 0px;

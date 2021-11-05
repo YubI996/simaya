@@ -1143,26 +1143,26 @@ elseif (isset($_POST['prpsl-del'])) {
 	}
 } elseif (isset($_POST['rea-os-modal'])) {
 
-	$id 	= $_POST['data'];
-	$osQRY 	= "SELECT `opskdt_id` AS os FROM `prpdt_opskdt` WHERE `prpdt_id` = :id";
+	$id 	= $_POST['data']; //id proposal
+	$osQRY 	= "SELECT `opskdt_id` AS os FROM `prpdt_opskdt` WHERE `prpdt_id` = :id"; // Ambil os proposal 
 	$DataOs = $pdo->prepare($osQRY);
 	$DataOs->bindValue(":id", $id, PDO::PARAM_STR);
 	$DataOs->execute();
 	$idPOS = implode($DataOs->fetch(PDO::FETCH_ASSOC)); //AMBIL SATU NILAINYA AJA
 
-	$ItmosQRY 	= "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :id";
+	$ItmosQRY 	= "SELECT item_kegiatan.item, item_kegiatan.kategori_item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :id";
 	$DataItmOs = $pdo->prepare($ItmosQRY);
 	$DataItmOs->bindValue(":id", $idPOS, PDO::PARAM_STR);
 	$DataItmOs->execute();
 	$itmOs = $DataItmOs->fetchAll(PDO::FETCH_ASSOC);
-	$ItmOs = call_user_func_array('array_merge', $itmOs);
-
+	$ItmOs = call_user_func_array('array_merge', $itmOs); //ambil nominal os proposal
+	// print_r($itmOs);
 
 	$PpQRY 	= "SELECT pnpldt_id  FROM prpdt_pnpldt WHERE prpdt_id = :id";
 	$DataPp = $pdo->prepare($PpQRY);
 	$DataPp->bindValue(":id", $id, PDO::PARAM_STR);
 	$DataPp->execute();
-	$idPPP = ($DataPp->fetchAll(PDO::FETCH_ASSOC));
+	$idPPP = ($DataPp->fetchAll(PDO::FETCH_ASSOC)); //ambil pp proposal
 	// $ph = str_repeat('?, ',  count($idPPP) - 1) . '?';
 	// print_r($idPPP);
 	foreach ($idPPP as $id) {
@@ -1170,7 +1170,7 @@ elseif (isset($_POST['prpsl-del'])) {
 		$DataItmPp = $pdo->prepare($ItmPpQRY);
 		$DataItmPp->bindValue(":id", $id['pnpldt_id'], PDO::PARAM_STR);
 		$DataItmPp->execute();
-		$itmPp[] = $DataItmPp->fetchAll(PDO::FETCH_ASSOC);
+		$itmPp[] = $DataItmPp->fetchAll(PDO::FETCH_ASSOC); //ambil nominal pp proposal
 	}
 	// print_r($itmPp);
 	$pnp = $DataPp->rowCount();
@@ -1209,7 +1209,7 @@ elseif (isset($_POST['prpsl-del'])) {
 							<!-- pendidikan politik collapse content wrapper -->
 							<div class="panel-body admin-panel-content">
 								<!-- file-repeater class -->
-								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 file-repeater" style="padding: 0;">';
+								<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding: 0;">';
 
 		echo '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 " style="padding: 0;">
 							';
@@ -1291,19 +1291,18 @@ elseif (isset($_POST['prpsl-del'])) {
                             </a>
                             <div id="collapse2" class="panel-collapse panel-ic collapse">
                                 <div class="panel-body admin-panel-content">';
-		$QRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :postID";
-		$Data  = $pdo->prepare($QRY);
-		$Data->bindValue(":postID", $idPOS, PDO::PARAM_STR);
-		$Data->execute();
 
-		if ($Data->rowCount() > 0) :
-			$DtCount  = $Data->rowCount();
-			$AllDt    = $Data->fetchAll(PDO::FETCH_ASSOC);
-			foreach ($AllDt as $key => $item) {
+
+		if (count($itmOs) > 0) :
+			// $DtCount  = $Data->rowCount();
+			// $AllDt    = $Data->fetchAll(PDO::FETCH_ASSOC);
+			foreach ($itmOs as $key => $item) {
 				$arr[$item['kategori_item']][$key] = $item;
 			}
 
 			ksort($arr, SORT_NUMERIC);
+			// print("<pre>" . print_r($arr, true) . "</pre>");
+
 			for ($i = 0; $i < $DtCount; $i++);
 			foreach ($arr as $key => $val) {
 				switch ($key) {
@@ -1354,7 +1353,7 @@ elseif (isset($_POST['prpsl-del'])) {
 					if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
 						echo 'onkeyup="maskCurrency()"';
 					}
-					echo ' />
+					echo ' value="' . $datas['value'] . '" />
                     </div>
                 </div>
             </div>
@@ -1368,31 +1367,11 @@ elseif (isset($_POST['prpsl-del'])) {
 </div>
 </div>
                         
-                        <div class="panel panel-default">
-                            <a data-toggle="collapse" data-parent="#accordion3" href="#collapse3">
-                                <div class="panel-heading accordion-head">
-                                    <h4 class="panel-title">Total RAB</h4>
-                                </div>
-                            </a>
-                            <div id="collapse3" class="panel-collapse panel-ic collapse in">
-                                <div class="panel-body admin-panel-content">
-                                    <div class="form-group-inner">
-                                        <div class="row">
-                                            <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-right pull-right-pro">Total</label>
-                                            </div>
-                                            <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
-                                                <input type="text" class="form-control mask-currency" placeholder="Rp 0.000.000" name="ttl_rab" onkeyup="maskCurrency()" />
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-						</div.
+                        
+						</div>
 						</form>
 					</div>
-					</div>
+					</div> 
 				</div>
 				<div class="modal-footer">
 					<a data-dismiss="modal" href="#">Batalkan</a>

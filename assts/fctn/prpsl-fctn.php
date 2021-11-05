@@ -649,7 +649,7 @@ elseif (isset($_POST['prpsl-del'])) {
 	$user 		= $_SESSION["access-login"];
 	$datas[] 		= $_POST['data']['datas'];
 	$osID 		= $_POST['data']['os_num']; //id proposal
-	// print("<pre>" . print_r($_POST['data']['os_num'], true) . "</pre>");
+	print("<pre>" . print_r($_POST, true) . "</pre>");
 
 
 	// begin transaction
@@ -664,7 +664,7 @@ elseif (isset($_POST['prpsl-del'])) {
 
 
 
-		print("<pre>" . print_r($datas[0][2], true) . "</pre>");
+		// print("<pre>" . print_r($datas[0][2], true) . "</pre>");
 		foreach ($datas[0] as $idx => $val) {
 
 			$putitmQry 	= "INSERT INTO item_rea (`id_item`, `id_op`, `id_pnp`, `value`) VALUES (:idItem, :osId, NULL, :item)";
@@ -1165,14 +1165,17 @@ elseif (isset($_POST['prpsl-del'])) {
 	$idPPP = ($DataPp->fetchAll(PDO::FETCH_ASSOC)); //ambil pp proposal
 	// $ph = str_repeat('?, ',  count($idPPP) - 1) . '?';
 	// print_r($idPPP);
-	foreach ($idPPP as $id) {
-		$ItmPpQRY 	= "SELECT item_prop.id_item,item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :id";
-		$DataItmPp = $pdo->prepare($ItmPpQRY);
-		$DataItmPp->bindValue(":id", $id['pnpldt_id'], PDO::PARAM_STR);
-		$DataItmPp->execute();
-		$itmPp[] = $DataItmPp->fetchAll(PDO::FETCH_ASSOC); //ambil nominal pp proposal
+	foreach ($idPPP as $key => $data) {
+		foreach ($data as $id) {
+
+			$ItmPpQRY 	= "SELECT item_prop.id_item,item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :id";
+			$DataItmPp = $pdo->prepare($ItmPpQRY);
+			$DataItmPp->bindValue(":id", $id['pnpldt_id'], PDO::PARAM_STR);
+			$DataItmPp->execute();
+			$itmPp[$id] = $DataItmPp->fetchAll(PDO::FETCH_ASSOC); //ambil nominal pp proposal
+		}
 	}
-	// print_r($itmPp);
+	print_r($itmPp);
 	$pnp = $DataPp->rowCount();
 	if ($DataOs->rowCount() < 1 && $DataPp->rowCount() < 1) {
 		echo ('Proposal tidak ditemukan');
@@ -1220,13 +1223,15 @@ elseif (isset($_POST['prpsl-del'])) {
 		if ($pnp > 0) :
 			// $fileAllDt    = $fileData->fetchAll(PDO::FETCH_ASSOC);
 
-			foreach ($itmPp as $datas) {
+			foreach ($itmPp as $idx => $datas) {
 				echo '<!-- form repeater start -->
 							<div data-repeater-list="kgD4tforLo0P">
 								<div data-repeater-item>
 									<!-- form wrapper start -->
 									<div class="sparkline10-list" style="margin-top: 10px;">';
 				foreach ($datas as $data) {
+					// print("<pre>" . print_r($data, true) . "</pre>");
+
 					echo '
                                 <div class="form-group-inner">
                                     <div class="row">
@@ -1237,7 +1242,9 @@ elseif (isset($_POST['prpsl-del'])) {
                                         </div>
                                         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                                             <div class="input-mark-inner mg-b-22">
-                                                <input type="';
+                                                <input type="hidden" class="form-control" value="' . $idx .
+						'" name="pp_num[' . $idx . ']" />
+											<input type="';
 					if ($data['item'] != 'Nama Kegiatan') {
 						echo 'number';
 					} else {

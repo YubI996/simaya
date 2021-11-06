@@ -184,14 +184,12 @@
                                     $ppRId = "0";
                                     $ttlRPP = 0;
                                 } else {
-                                    $ppRId[] = $ppRData->fetchAll(PDO::FETCH_COLUMN); //data realisasi = $pData
-                                    $arrayRPp = call_user_func_array('array_merge', $ppRId);
-                                    $ppRCount = $ppRData->rowCount();
+                                    $ppRId = $ppRData->fetchAll(PDO::FETCH_COLUMN); //data realisasi = $pData
                                     // fetch data item realisasi Pendidikan Politik=> pp items and their corresponding value
-                                    for ($p = 0; $p < count($arrayRPp); $p++) {
-                                        $itmRPpQRY   = "SELECT item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :postID";
+                                    foreach ($ppRId as $index => $val) {
+                                        $itmRPpQRY   = "SELECT item_kegiatan.item, item_rea.value FROM item_rea INNER JOIN item_kegiatan ON item_rea.id_item=item_kegiatan.id_item WHERE id_pnp = :postID";
                                         $itmRData  = $pdo->prepare($itmRPpQRY);
-                                        $itmRData->bindValue(":postID", $array[$p], PDO::PARAM_STR);
+                                        $itmRData->bindValue(":postID", $val, PDO::PARAM_STR);
                                         $hasilRPp = $itmRData->execute();
                                         $dataRPp[] = $itmRData->fetchAll(PDO::FETCH_ASSOC);
                                     }
@@ -208,6 +206,8 @@
                                         }
                                     }
                                     // print("<pre>" . print_r($dataPp, true) . "</pre>");
+                                    // print("<pre>" . print_r(empty($ppRId), true) . "</pre>");
+                                    // print_r(empty($ppRId));
                                 }
 
 
@@ -282,7 +282,7 @@
                                     <div class="card-body">
                                         <div class="custom-row">
                                             <div class="col-lg-12 col-md-12 col-sm-0 col-xs-0">
-                                                <!-- content left coloumn -->
+                                                <!-- content left collumn -->
 
                                                 <!-- <div class="row"> -->
                                                 <!-- <div class="col-lg-12 col-md-12 col-sm-0 col-xs-0" style="margin-top: 35px;"> -->
@@ -357,16 +357,17 @@
                                                             </td>
                                                         </tr>
                                                     <?php endfor;
-                                                    echo $osRId . ":" . $ppRId . "-"; ?>
+                                                    // echo $osRId . ":" . $ppRId . "-"; 
+                                                    ?>
                                                 </table>
                                                 <!-- </div> -->
                                                 <!-- </div> -->
 
-                                            </div><!-- end of content left coloumn -->
+                                            </div><!-- end of content upper collumn -->
 
                                             <?php if ($osRId != 0) {  ?>
                                                 <div class="col-lg-5 col-md-5 col-sm-0 col-xs-0">
-                                                    <!-- content right coloumn -->
+                                                    <!-- content left collumn -->
                                                     <div class="row">
                                                         <div class="col-lg-12 col-md-12 col-sm-0 col-xs-0">
                                                             <table class="row-detail">
@@ -419,10 +420,11 @@
                                                             </table>
                                                         </div>
                                                     </div>
-                                                </div><!-- end of content left coloumn -->
-                                            <?php } elseif ($ppRId != 0) {  ?>
-
-                                                <div class="col-lg-1 col-md-1 col-sm-0 col-xs-0"> </div><!-- coloumn space -->
+                                                </div><!-- end of content left collumn -->
+                                            <?php
+                                            }
+                                            if (isset($ppRId)) {  ?>
+                                                <div class="col-lg-1 col-md-1 col-sm-0 col-xs-0"> </div><!-- collumn space -->
                                                 <div class="col-lg-5 col-md-5 col-sm-0 col-xs-0">
                                                     <!-- start of content right column -->
                                                     <div class="col-lg-12 col-md-12 col-sm-0 col-xs-0" style="margin-top: 20px;">

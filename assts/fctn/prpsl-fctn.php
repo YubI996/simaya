@@ -633,7 +633,7 @@ elseif (isset($_POST['prpsl-del'])) {
 			$putitmOpskdt->execute();
 		}
 
-		$pdo->commit();
+		// $pdo->commit();
 		echo "green";
 	} catch (PDOException $e) {
 		$pdo->rollback();
@@ -647,14 +647,15 @@ elseif (isset($_POST['prpsl-del'])) {
 
 
 	$user 		= $_SESSION["access-login"];
-	$datas[] 		= $_POST['data']['datas'];
+	$dataos 		= $_POST['data']['dataos'];
+	$datapp		= $_POST['data']['datapp'];
 	$osID 		= $_POST['data']['os_num']; //id proposal
-	print("<pre>" . print_r($_POST, true) . "</pre>");
+	// print("<pre>" . print_r($_POST, true) . "</pre>");
 
 
 	// begin transaction
 	$pdo->beginTransaction();
-	try {
+	try { //insert os
 		$putQry 	= "INSERT INTO `prpdt_rea_opskdt` (`opskdt_id`, `sttus`, `created_by`, `modified_by`, `created_date`, `modified_date`) VALUES (:osId, 'publish', :user, :user, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
 		$putOpskdt 	= $pdo->prepare($putQry);
 		$putOpskdt->bindValue(":osId", $osID, PDO::PARAM_STR);
@@ -664,17 +665,18 @@ elseif (isset($_POST['prpsl-del'])) {
 
 
 
-		// print("<pre>" . print_r($datas[0][2], true) . "</pre>");
-		foreach ($datas[0] as $idx => $val) {
-
-			$putitmQry 	= "INSERT INTO item_rea (`id_item`, `id_op`, `id_pnp`, `value`) VALUES (:idItem, :osId, NULL, :item)";
-			$putitmOpskdt 	= $pdo->prepare($putitmQry);
-			$putitmOpskdt->bindValue(":idItem", $idx, PDO::PARAM_STR);
-			$putitmOpskdt->bindValue(":osId", $idOS, PDO::PARAM_STR);
-			$putitmOpskdt->bindValue(":item", $val, PDO::PARAM_STR);
-			$putitmOpskdt->execute();
+		// print("<pre>" . print_r($datapp, true) . "</pre>");
+		foreach ($dataos as $idx => $data) {
+			foreach ($data as $key => $dt) {
+				$putitmQry 	= "INSERT INTO item_rea (`id_item`, `id_op`, `id_pnp`, `value`) VALUES (:idItem, :osId, NULL, :item)";
+				$putitmOpskdt 	= $pdo->prepare($putitmQry);
+				$putitmOpskdt->bindValue(":idItem", $idx, PDO::PARAM_STR);
+				$putitmOpskdt->bindValue(":osId", $idOS, PDO::PARAM_STR);
+				$putitmOpskdt->bindValue(":item", $dt, PDO::PARAM_STR);
+				$hsl =	$putitmOpskdt->execute();
+			}
 		}
-
+		// echo ('insert os :' . $hsl);
 		$pdo->commit();
 		echo "green";
 	} catch (PDOException $e) {
@@ -685,122 +687,35 @@ elseif (isset($_POST['prpsl-del'])) {
 			echo $e->getCode();
 		}
 	}
-} elseif (isset($_POST['prpsl-pp-put'])) {
-	$user 		= $_SESSION["access-login"];
-	$cont 		= $_POST['cont'];
-	$pnpId 		= $_POST['data']['pnp_num'];
-	$pnpName	= $_POST['data']['pnp_nm'];
-	$pnpAtk 	= $_POST['data']['pnp_atk'];
-	$pnpCetak 	= $_POST['data']['pnp_ctk'];
-	$pnpMkmn	= $_POST['data']['pnp_mkmn'];
-	$pnpSppd	= $_POST['data']['pnp_sppd'];
-	$pnpLain 	= $_POST['data']['pnp_ln'];
-	$pnpHonor 	= $_POST['data']['pnp_hnr'];
-	$pnpTrans 	= $_POST['data']['pnp_trns'];
-	$pnpSewa 	= $_POST['data']['pnp_swa'];
-	$pnpSaku 	= $_POST['data']['pnp_sku'];
-
-	if ($pnpName == "") {
-		$pnpName = "kegiatan partai";
-	}
-
-	if ($pnpAtk == "") {
-		$pnpAtk = "0";
-	}
-
-	if ($pnpCetak == "") {
-		$pnpCetak = "0";
-	}
-
-	if ($pnpMkmn == "") {
-		$pnpMkmn = "0";
-	}
-
-	if ($pnpSppd == "") {
-		$pnpSppd = "0";
-	}
-
-	if ($pnpLain == "") {
-		$pnpLain = "0";
-	}
-
-	if ($pnpHonor == "") {
-		$pnpHonor = "0";
-	}
-
-	if ($pnpTrans == "") {
-		$pnpTrans = "0";
-	}
-
-	if ($pnpSewa == "") {
-		$pnpSewa = "0";
-	}
-
-	if ($pnpSaku == "") {
-		$pnpSaku = "0";
-	}
-
-	if ($cont == "put") {
-		//begin transaction
-		$pdo->beginTransaction();
-		try {
-			$putQry 	= "UPDATE prpdt_pnpldt SET `pnpldt_nm`=:name, `pnpldt_atk`=:atk, `pnpldt_ctk`=:ctk, `pnpldt_mkmn`=:mkmn, `pnpldt_sppd`=:sppd, `pnpldt_hnr`=:hnr, `pnpldt_trns`=:trns, `pnpldt_swa`=:swa, `pnpldt_sku`=:sku, `pnpldt_ln`=:ln, `modified_by`=:user WHERE `pnpldt_id`=:id";
-			$putPnpldt 	= $pdo->prepare($putQry);
-			$putPnpldt->bindValue(":name", $pnpName, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":atk", $pnpAtk, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":ctk", $pnpCetak, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":mkmn", $pnpMkmn, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":sppd", $pnpSppd, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":hnr", $pnpHonor, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":trns", $pnpTrans, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":swa", $pnpSewa, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":sku", $pnpSaku, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":ln", $pnpLain, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":user", $user, PDO::PARAM_STR);
-			$putPnpldt->bindValue(":id", $pnpId, PDO::PARAM_STR);
-			$putPnpldt->execute();
-
-			$pdo->commit();
-			echo "green";
-		} catch (PDOException $e) {
-			$pdo->rollback();
-			if ($state == 'devel') {
-				echo $e;
-			} elseif ($state == 'production') {
-				echo $e->getCode();
+	try { //insert pp
+		foreach ($datapp as $idpp => $datas) {
+			$putQry 	= "INSERT INTO `prpdt_rea_pnpldt` (`pnpldt_id`, `sttus`, `created_by`, `modified_by`, `created_date`, `modified_date`) VALUES (:ppId, 'publish', :user, :user, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)";
+			$putPpskdt 	= $pdo->prepare($putQry);
+			$putPpskdt->bindValue(":ppId", $idpp, PDO::PARAM_STR);
+			$putPpskdt->bindValue(":user", $user, PDO::PARAM_STR);
+			$putPpskdt->execute();
+			$idPP = $pdo->lastInsertId();
+			foreach ($datas as $iditm => $dts) {
+				foreach ($dts as $val) {
+					$putitmQry 	= "INSERT INTO item_rea (`id_item`, `id_op`, `id_pnp`, `value`) VALUES (:idItem, NULL, :ppid, :item)";
+					$putitmPPdt 	= $pdo->prepare($putitmQry);
+					$putitmPPdt->bindValue(":idItem", $iditm, PDO::PARAM_STR);
+					$putitmPPdt->bindValue(":ppid", $idPP, PDO::PARAM_STR);
+					$putitmPPdt->bindValue(":item", $val, PDO::PARAM_STR);
+					$hsl =	$putitmPPdt->execute();
+				}
 			}
 		}
-	} else {
-		$pdo->beginTransaction();
-		try {
-			$status 	= "publish";
-			$addQry 	= "INSERT INTO prpdt_pnpldt (prpdt_id, pnpldt_nm, pnpldt_atk, pnpldt_ctk, pnpldt_mkmn, pnpldt_sppd, pnpldt_hnr, pnpldt_trns, pnpldt_swa, pnpldt_sku, pnpldt_ln, sttus, created_by, modified_by) VALUES (:prpdt_id, :pnpldt_nm, :pnpldt_atk, :pnpldt_ctk, :pnpldt_mkmn, :pnpldt_sppd, :pnpldt_hnr, :pnpldt_trns, :pnpldt_swa, :pnpldt_sku, :pnpldt_ln, :sttus, :user, :user)";
-			$addPnpldt 	= $pdo->prepare($addQry);
-			$addPnpldt->bindValue(":prpdt_id", $pnpId, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_nm", $pnpName, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_atk", $pnpAtk, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_ctk", $pnpFc, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_mkmn", $pnpMkmn, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_sppd", $pnpSppd, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_hnr", $pnpHonor, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_trns", $pnpTrans, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_swa", $pnpSewa, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_sku", $pnpSaku, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":pnpldt_ln", $pnpLain, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":sttus", $status, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":user", $user, PDO::PARAM_STR);
-			$addPnpldt->bindValue(":user", $user, PDO::PARAM_STR);
-			$addPnpldt->execute();
 
-			$pdo->commit();
-			echo "green";
-		} catch (PDOException $e) {
-			$pdo->rollback();
-			if ($state == 'devel') {
-				echo $e;
-			} elseif ($state == 'production') {
-				echo $e->getCode();
-			}
+		// echo ('insert pp :' . $hsl);
+		$pdo->commit();
+		echo "green";
+	} catch (PDOException $e) {
+		$pdo->rollback();
+		if ($state == 'devel') {
+			echo $e;
+		} elseif ($state == 'production') {
+			echo $e->getCode();
 		}
 	}
 } elseif (isset($_POST['prpsl-file-put'])) {
@@ -1150,7 +1065,7 @@ elseif (isset($_POST['prpsl-del'])) {
 	$DataOs->execute();
 	$idPOS = implode($DataOs->fetch(PDO::FETCH_ASSOC)); //AMBIL SATU NILAINYA AJA
 
-	$ItmosQRY 	= "SELECT item_kegiatan.item, item_kegiatan.kategori_item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :id";
+	$ItmosQRY 	= "SELECT item_prop.id_item, item_kegiatan.item, item_kegiatan.kategori_item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_op = :id";
 	$DataItmOs = $pdo->prepare($ItmosQRY);
 	$DataItmOs->bindValue(":id", $idPOS, PDO::PARAM_STR);
 	$DataItmOs->execute();
@@ -1167,15 +1082,16 @@ elseif (isset($_POST['prpsl-del'])) {
 	// print_r($idPPP);
 	foreach ($idPPP as $key => $data) {
 		foreach ($data as $id) {
+			// print_r($id);
 
 			$ItmPpQRY 	= "SELECT item_prop.id_item,item_kegiatan.item, item_prop.value FROM item_prop INNER JOIN item_kegiatan ON item_prop.id_item=item_kegiatan.id_item WHERE id_pnp = :id";
 			$DataItmPp = $pdo->prepare($ItmPpQRY);
-			$DataItmPp->bindValue(":id", $id['pnpldt_id'], PDO::PARAM_STR);
+			$DataItmPp->bindValue(":id", $id, PDO::PARAM_STR);
 			$DataItmPp->execute();
 			$itmPp[$id] = $DataItmPp->fetchAll(PDO::FETCH_ASSOC); //ambil nominal pp proposal
 		}
 	}
-	print_r($itmPp);
+	// print_r($itmPp);
 	$pnp = $DataPp->rowCount();
 	if ($DataOs->rowCount() < 1 && $DataPp->rowCount() < 1) {
 		echo ('Proposal tidak ditemukan');
@@ -1222,6 +1138,7 @@ elseif (isset($_POST['prpsl-del'])) {
 
 		if ($pnp > 0) :
 			// $fileAllDt    = $fileData->fetchAll(PDO::FETCH_ASSOC);
+			// print("<pre>" . print_r($itmPp, true) . "</pre>");
 
 			foreach ($itmPp as $idx => $datas) {
 				echo '<!-- form repeater start -->
@@ -1230,20 +1147,17 @@ elseif (isset($_POST['prpsl-del'])) {
 									<!-- form wrapper start -->
 									<div class="sparkline10-list" style="margin-top: 10px;">';
 				foreach ($datas as $data) {
-					// print("<pre>" . print_r($data, true) . "</pre>");
 
 					echo '
                                 <div class="form-group-inner">
                                     <div class="row">
                                         <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                            <label class="login2 pull-left pull-left-pro">' .
+                                            <label class="login2 pull-left pull-left-pro text-left">' .
 						$data['item'] .
 						'</label>
                                         </div>
                                         <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                                             <div class="input-mark-inner mg-b-22">
-                                                <input type="hidden" class="form-control" value="' . $idx .
-						'" name="pp_num[' . $idx . ']" />
 											<input type="';
 					if ($data['item'] != 'Nama Kegiatan') {
 						echo 'number';
@@ -1266,7 +1180,7 @@ elseif (isset($_POST['prpsl-del'])) {
 					echo '" value="' . $data['value'];
 
 
-					echo '" name="' . $data['id_item'] . $data['item'] . '"';
+					echo '" name="datapp][' . $idx . '][' . $data['id_item'] . '][' . $data['item'] . ']"';
 					if ($data['item'] != 'Nama Kegiatan') {
 						echo 'onkeyup="maskCurrency()"';
 					}
@@ -1334,17 +1248,17 @@ elseif (isset($_POST['prpsl-del'])) {
 						break;
 				}
 				echo '<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                                    <label class="login2 pull-left">' . $key . ". " . $judul . '</label>
+                                    <label class="login2 pull-left pull-left-pro text-left">' . $key . ". " . $judul . '</label>
                                 </div>';
 				// var_dump("key : " . $key . ":");
 				foreach ($val as $key2 => $datas) {
-					// var_dump("data : " . $datas["item"]);
+					// print_r($datas);
 
 					echo '
                                     <div class="form-group-inner">
                                         <div class="row">
                                             <div class="col-lg-4 col-md-12 col-sm-12 col-xs-12">
-                                                <label class="login2 pull-left pull-left-pro">' . $datas["item"] . '</label>
+                                                <label class="login2 pull-left pull-left-pro text-left">' . $datas["item"] . '</label>
                                             </div>
                                             <div class="col-lg-8 col-md-12 col-sm-12 col-xs-12">
                                                 <div class="input-mark-inner mg-b-22">
@@ -1356,7 +1270,7 @@ elseif (isset($_POST['prpsl-del'])) {
 					} else {
 						echo 'Rp 0.000.000';
 					}
-					echo '" name="' . $datas["id_item"] . $datas["item"] . '"';
+					echo '" name="dataos][' . $datas["id_item"] . '][' . $datas["item"] . ']"';
 					if ($AllDt[$i]['item'] != 'Nama Kegiatan') {
 						echo 'onkeyup="maskCurrency()"';
 					}

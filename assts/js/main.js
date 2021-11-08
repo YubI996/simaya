@@ -1,5 +1,12 @@
 (function ($) {
  "use strict";
+	
+	// checkbox di admin
+	$("#koreksi").change(function() {
+		if(this.checked) {
+			$("#catatan").attr("class", "");
+		}
+	});
 
 	/*----------------------------
 	 jQuery MeanMenu
@@ -29,9 +36,9 @@
 	$('[tooltip-toggle="tooltip"]').tooltip(); 
 	
 	$('#sidebarCollapse').on('click', function () {
-                     $('#sidebar').toggleClass('active');
-                     
-                 });
+					$('#sidebar').toggleClass('active');
+					
+				});
 		// Collapse ibox function
 			$('#sidebar ul li').on('click', function () {
 				var button = $(this).find('i.fa.indicator-mn');
@@ -89,3 +96,23 @@ $(".back-to-top").on('click', function () {
     }); 	   
  
 })(jQuery); 
+addCat = function () {
+	 		var form = this.document.forms;
+            
+            var formData = {};
+            $(form).find("input[name]").each(function (index, node) {
+                formData[node.name] = node.value;
+            });
+			console.log(formData);
+            $.ajax({
+                type: 'POST',
+                url: '../../assts/fctn/prpsl-fctn.php',
+                data: {
+                    'catatan' : 1,
+					'data':formData,
+                },
+				success: function(data){
+					plPutNotif(data);
+                } 
+            });
+        }

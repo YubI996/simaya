@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 include_once("./serv-conf.php");
 $root = BASE_URL;
@@ -33,66 +33,62 @@ if (isset($_POST['mm-signup'])) {
 				echo "green";
 			} catch (PDOException $e) {
 				$pdo->rollback();
-				if ( $state == 'devel' ) {
+				if ($state == 'devel') {
 					echo $e;
-				}elseif ($state == 'production') {
+				} elseif ($state == 'production') {
 					echo $e->getCode();
 				}
 			}
 		}
 	} catch (PDOException $e) {
 		$pdo->rollback();
-		if ( $state == 'devel' ) {
+		if ($state == 'devel') {
 			echo $e;
-		}elseif ($state == 'production') {
+		} elseif ($state == 'production') {
 			echo $e->getCode();
 		}
-		
 	}
-}
-
-elseif (isset($_POST['mm-login'])) {
+} elseif (isset($_POST['mm-login'])) {
 	$usr_name 		= $_POST['data']['usr-nm'];
 	$usr_password	= $_POST['data']['usr-pss'];
 
-	
-		try {
-			$Qry = "SELECT * FROM mem WHERE mem_ = :user LIMIT 1";
-			$chUsr = $pdo->prepare($Qry);
-			$chUsr->bindValue(":user", $usr_name, PDO::PARAM_STR);
-			$chUsr->execute();
 
-			if ($chUsr->rowCount() > 0) {
-				$dbData = $chUsr->fetchAll(PDO::FETCH_ASSOC);
-				$dbUser = $dbData[0]['mem_'];
-				$dbPass = $dbData[0]['mem_pess'];
-				$dbStat = $dbData[0]['sttus'];
+	try {
+		$Qry = "SELECT * FROM mem WHERE mem_ = :user LIMIT 1";
+		$chUsr = $pdo->prepare($Qry);
+		$chUsr->bindValue(":user", $usr_name, PDO::PARAM_STR);
+		$chUsr->execute();
 
-				if (password_verify($usr_password, $dbPass)) {
-					if ($dbStat == "green"/*ad your admin level*/ OR $dbStat == "blue" OR $dbStat == "rainbow"/*ad your admin level*/) {
-						$_SESSION["userauth_token-key"] = md5(KEY);/*add your auth token private key*/
-						$_SESSION["access-login"] 		= $dbUser;
-						$_SESSION["uID"]				= $dbData[0]['mem_id'];
-						$_SESSION["color"]				= $dbStat;
+		if ($chUsr->rowCount() > 0) {
+			$dbData = $chUsr->fetchAll(PDO::FETCH_ASSOC);
+			$dbUser = $dbData[0]['mem_'];
+			$dbPass = $dbData[0]['mem_pess'];
+			$dbStat = $dbData[0]['sttus'];
 
-						echo "green";
-					} else {
-						echo "your account is non active, please contact your admin or wait until your account is active";
-					}
+			if (password_verify($usr_password, $dbPass)) {
+				if ($dbStat == "green"/*ad your admin level*/ or $dbStat == "blue" or $dbStat == "rainbow"/*ad your admin level*/) {
+					$_SESSION["userauth_token-key"] = md5(KEY);/*add your auth token private key*/
+					$_SESSION["access-login"] 		= $dbUser;
+					$_SESSION["uID"]				= $dbData[0]['mem_id'];
+					$_SESSION["color"]				= $dbStat;
+
+					echo "green";
 				} else {
-					echo "iP";
+					echo "your account is non active, please contact your admin or wait until your account is active";
 				}
 			} else {
-				echo "nF";
+				echo "iP";
 			}
-		} catch (PDOException $e) {
-			if ( $state == 'devel' ) {
-				echo $e;
-			}elseif ($state == 'production') {
-				echo $e->getCode();
-			}
-			
+		} else {
+			echo "nF";
 		}
+	} catch (PDOException $e) {
+		if ($state == 'devel') {
+			echo $e;
+		} elseif ($state == 'production') {
+			echo $e->getCode();
+		}
+	}
 }
 
 //LOGOUT
@@ -100,10 +96,6 @@ elseif (isset($_POST['mm-logout'])) {
 	session_destroy();
 	$_POST = array();
 	echo "lgGreen";
+} else {
+	header('location: ' . $root);
 }
-
-else {
-	header('location: '.$root);
-}
-
-?>

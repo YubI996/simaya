@@ -315,6 +315,8 @@
                                                                 <td>No</td>
                                                                 <td>Nama File</td>
                                                                 <td style="text-align: center; min-width: 100px;">Link File</td>
+                                                                <td style="text-align: center; min-width: 50px;">Koreksi</td>
+                                                                <td class="hidden" id="catatan">Catatan</td>
                                                             </tr>
                                                             <?php
                                                             for ($a = 0; $a < $fcLpjCount; $a++) :
@@ -324,12 +326,13 @@
                                                                 $flData->bindValue(":postID", $pId, PDO::PARAM_STR);
                                                                 $flData->bindValue(":cnfgID", $cnfgID, PDO::PARAM_STR);
                                                                 $flData->execute();
-
+                                                                $fileExist = false;
                                                                 if ($flData->rowCount() > 0) {
                                                                     $flCData = $flData->rowCount();
                                                                     $flAllDt = $flData->fetchAll(PDO::FETCH_ASSOC);
                                                                     $link    = "<a href='" . BASE_URL . "upl/" . $flAllDt[0]['link'] . "' target='_blank'>preview</a>";
                                                                     $flId    = $flAllDt[0]['fileId'];
+                                                                    $fileExist = true;
                                                                 } else {
                                                                     $link    = "<span>not found</span>";
                                                                     $flId    = "not";
@@ -340,6 +343,12 @@
                                                                     <td style="border-right: 1px solid #e9ecef;"><?php echo $a + 1 ?></td>
                                                                     <td><?php echo $fcLpjDt[$a]['pcnfg_nm'] ?></td>
                                                                     <td style="text-align:center; border-left: 1px solid #e9ecef;border-right: 1px solid #e9ecef;" width="10%"><?php echo $link; ?></td>
+                                                                    <?php if ($fileExist) {
+                                                                        echo '<td><form id="cat">
+                                                                        <input type="hidden" name="fileId" value="' . $flId . '">
+                                                                        <input style="width:100%;" type="text" name="catatan" id="catatan"></form>
+                                                                        <button type="submit" class="btn btn-primary btn-sm btn-block" onclick="addCat($(this))">Koreksi</button></td>';
+                                                                    } ?>
                                                                 </tr>
                                                             <?php endfor; ?>
                                                         </table>

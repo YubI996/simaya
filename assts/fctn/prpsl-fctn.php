@@ -277,7 +277,9 @@ if (isset($_POST['prpsl-add'])) {
 						echo "Gagal memasukkan data file 8.";
 					}
 				}
-
+				if (isset($_POST['catatan'])) {
+					("ddddddd");
+				}
 				//buat proposal
 				// try {
 				// 	$addOsQry = "INSERT INTO item_prop (prpdt_id, sttus, created_by) VALUES (:prpdt_id, :baru, :user)";
@@ -643,6 +645,23 @@ elseif (isset($_POST['prpsl-del'])) {
 			echo $e->getCode();
 		}
 	}
+} elseif (isset($_POST['catatan'])) {
+	print("<pre>" . print_r($_POST, true) . "</pre>");
+
+	$flid = $_POST['data']['fileId'];
+	$cat = $_POST['data']['catatan'];
+	$pdo->beginTransaction();
+	// try {
+	// 	$qr = "UPDATE `pile` SET `koreksi` = '1', `cat` = :cat, `modified_date` = CURRENT_TIMESTAMP WHERE `pile`.`pile_id` = :id";
+	// 	$up = $pdo->prepare($qr);
+	// 	$ip->bindValue(":id", $flid, PDO::PARAM_STR);
+	// 	$ip->bindValue(":cat", $cat, PDO::PARAM_STR);
+	// 	$up->execute();
+	// 	$pdo->commit();
+	// 	echo "green";
+	// } catch (PDOException $e) {
+	// 	echo $e;
+	// }
 } elseif (isset($_POST['prpsl-rea-os-put'])) {
 
 

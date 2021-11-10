@@ -315,42 +315,45 @@
                                                                 <td>No</td>
                                                                 <td>Nama File</td>
                                                                 <td style="text-align: center; min-width: 100px;">Link File</td>
-                                                                <td style="text-align: center; min-width: 50px;">Koreksi</td>
-                                                                <td class="hidden" id="catatan">Catatan</td>
+                                                                <?php
+                                                                for ($a = 0; $a < $fcLpjCount; $a++) :
+                                                                    $cnfgID  = $fcLpjDt[$a]['pcnfg_id'];
+                                                                    $flQRY   = "SELECT pile_id as fileId, pile_ as link, koreksi as k FROM pile WHERE prpdt_id = :postID AND pcnfg_id = :cnfgID AND sttus = 'publish' LIMIT 1";
+                                                                    $flData  = $pdo->prepare($flQRY);
+                                                                    $flData->bindValue(":postID", $pId, PDO::PARAM_STR);
+                                                                    $flData->bindValue(":cnfgID", $cnfgID, PDO::PARAM_STR);
+                                                                    $flData->execute();
+                                                                    $fileExist = false;
+                                                                    if ($flData->rowCount() > 0) {
+                                                                        $flCData = $flData->rowCount();
+                                                                        $flAllDt = $flData->fetchAll(PDO::FETCH_ASSOC);
+                                                                        $link    = "<a href='" . BASE_URL . "upl/" . $flAllDt[0]['link'] . "' target='_blank'>preview</a>";
+                                                                        $flId    = $flAllDt[0]['fileId'];
+                                                                        $fileExist = true;
+                                                                        echo '<td style="text-align: center; min-width: 50px;">Koreksi</td>';
+                                                                    } else {
+                                                                        $link    = "<span>not found</span>";
+                                                                        $flId    = "not";
+                                                                    }
+                                                                ?>
                                                             </tr>
-                                                            <?php
-                                                            for ($a = 0; $a < $fcLpjCount; $a++) :
-                                                                $cnfgID  = $fcLpjDt[$a]['pcnfg_id'];
-                                                                $flQRY   = "SELECT pile_id as fileId, pile_ as link FROM pile WHERE prpdt_id = :postID AND pcnfg_id = :cnfgID AND sttus = 'publish' LIMIT 1";
-                                                                $flData  = $pdo->prepare($flQRY);
-                                                                $flData->bindValue(":postID", $pId, PDO::PARAM_STR);
-                                                                $flData->bindValue(":cnfgID", $cnfgID, PDO::PARAM_STR);
-                                                                $flData->execute();
-                                                                $fileExist = false;
-                                                                if ($flData->rowCount() > 0) {
-                                                                    $flCData = $flData->rowCount();
-                                                                    $flAllDt = $flData->fetchAll(PDO::FETCH_ASSOC);
-                                                                    $link    = "<a href='" . BASE_URL . "upl/" . $flAllDt[0]['link'] . "' target='_blank'>preview</a>";
-                                                                    $flId    = $flAllDt[0]['fileId'];
-                                                                    $fileExist = true;
-                                                                } else {
-                                                                    $link    = "<span>not found</span>";
-                                                                    $flId    = "not";
-                                                                }
-                                                            ?>
 
-                                                                <tr id="flDt-<?php echo $i + 1 ?>-<?php echo $a + 1 ?>">
-                                                                    <td style="border-right: 1px solid #e9ecef;"><?php echo $a + 1 ?></td>
-                                                                    <td><?php echo $fcLpjDt[$a]['pcnfg_nm'] ?></td>
-                                                                    <td style="text-align:center; border-left: 1px solid #e9ecef;border-right: 1px solid #e9ecef;" width="10%"><?php echo $link; ?></td>
-                                                                    <?php if ($fileExist) {
+
+                                                            <tr id="flDt-<?php echo $i + 1 ?>-<?php echo $a + 1 ?>">
+                                                                <td style="border-right: 1px solid #e9ecef;"><?php echo $a + 1 ?></td>
+                                                                <td><?php echo $fcLpjDt[$a]['pcnfg_nm'] ?></td>
+                                                                <td style="text-align:center; border-left: 1px solid #e9ecef;border-right: 1px solid #e9ecef;" width="10%"><?php echo $link; ?></td>
+                                                                <?php if ($fileExist && empty($flAllDt[0]['k'])) {
                                                                         echo '<td><form id="cat">
                                                                         <input type="hidden" name="fileId" value="' . $flId . '">
                                                                         <input style="width:100%;" type="text" name="catatan" id="catatan"></form>
                                                                         <button type="submit" class="btn btn-primary btn-sm btn-block" onclick="addCat($(this))">Koreksi</button></td>';
-                                                                    } ?>
-                                                                </tr>
-                                                            <?php endfor; ?>
+                                                                    } elseif ($fileExist) {
+                                                                        echo '<td><h5>Koreksi telah dikirim.</h5></td>';
+                                                                    }
+                                                                    $fileExist = false; ?>
+                                                            </tr>
+                                                        <?php endfor; ?>
                                                         </table>
                                                     </div>
                                                 </div>

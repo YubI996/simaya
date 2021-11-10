@@ -97,7 +97,7 @@ $(".back-to-top").on('click', function () {
  
 })(jQuery); 
 addCat = function () {
-	 		var form = this.document.forms;
+	 		var form = $("#cat");
             
             var formData = {};
             $(form).find("input[name]").each(function (index, node) {

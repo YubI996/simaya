@@ -153,6 +153,7 @@
 
                                                 <!-- <div class="row"> -->
                                                 <!-- <div class="col-lg-12 col-md-12 col-sm-0 col-xs-0" style="margin-top: 35px;"> -->
+
                                                 <table class="row-detail">
                                                     <tr>
                                                         <td colspan="5">
@@ -164,11 +165,14 @@
                                                         <td>Nama File</td>
                                                         <td style="text-align: center; min-width: 100px;">Link File</td>
                                                         <td colspan="2" style="text-align: center;">Action</td>
+                                                        <td>Keterangan</td>
+
+
                                                     </tr>
                                                     <?php
                                                     for ($a = 0; $a < $fcDtCount; $a++) :
                                                         $cnfgID  = $fcAllDt[$a]['pcnfg_id'];
-                                                        $flQRY   = "SELECT pile_id as fileId, pile_ as link FROM pile WHERE prpdt_id = :postID AND pcnfg_id = :cnfgID AND sttus = 'publish' LIMIT 1";
+                                                        $flQRY   = "SELECT pile_id as fileId, pile_ as link, koreksi as k, cat as cat FROM pile WHERE prpdt_id = :postID AND pcnfg_id = :cnfgID AND sttus = 'publish' LIMIT 1";
                                                         $flData  = $pdo->prepare($flQRY);
                                                         $flData->bindValue(":postID", $pId, PDO::PARAM_STR);
                                                         $flData->bindValue(":cnfgID", $cnfgID, PDO::PARAM_STR);
@@ -195,6 +199,15 @@
                                                             <td>
                                                                 <button title="delete" class="pd-setting-ed" data-toggle="modal" data-target="#prpslFLDel" data-post="<?php echo $flId ?>" onclick="flModal($(this))"><i class="fa fa-trash-o" aria-hidden="true"></i></button>
                                                             </td>
+                                                            <?php
+                                                            if ($flAllDt[$a]['k']) {
+                                                                echo '<td  style="color:red;font-weight: bold;">' . $flAllDt[$a]['cat'] . '</td>';
+                                                            } else {
+                                                                echo '<td><h5>Tidak ada file.</h5></td>';
+                                                            }
+                                                            ?>
+
+
                                                         </tr>
                                                         <tr id="flUpM-<?php echo $i + 1 ?>-<?php echo $a + 1 ?>" style="display: none;">
                                                             <td style="border-right: 1px solid #e9ecef;"><?php echo $a + 1 ?></td>
